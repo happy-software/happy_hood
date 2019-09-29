@@ -1,0 +1,2 @@
+class HomeOwnersAssociation < ApplicationRecord
+end
