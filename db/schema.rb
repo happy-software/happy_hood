@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_29_232146) do
+ActiveRecord::Schema.define(version: 2019_09_30_001024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,7 +23,9 @@ ActiveRecord::Schema.define(version: 2019_09_29_232146) do
     t.string "website"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "hood_id"
     t.index ["active"], name: "index_home_owners_associations_on_active"
+    t.index ["hood_id"], name: "index_home_owners_associations_on_hood_id"
   end
 
   create_table "hoods", force: :cascade do |t|
@@ -67,5 +69,6 @@ ActiveRecord::Schema.define(version: 2019_09_29_232146) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "home_owners_associations", "hoods"
   add_foreign_key "houses", "hoods"
 end
