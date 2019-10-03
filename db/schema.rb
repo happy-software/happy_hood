@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_30_001024) do
+ActiveRecord::Schema.define(version: 2019_10_03_215905) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,11 +37,15 @@ ActiveRecord::Schema.define(version: 2019_09_30_001024) do
   end
 
   create_table "house_metadata", force: :cascade do |t|
-    t.integer "garage_count"
-    t.integer "bedrooms"
-    t.integer "bathrooms"
+    t.float "garage_count"
+    t.float "bedrooms"
+    t.float "bathrooms"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "zpid"
+    t.bigint "house_id"
+    t.float "square_feet"
+    t.index ["house_id"], name: "index_house_metadata_on_house_id"
   end
 
   create_table "house_prices", force: :cascade do |t|
@@ -51,6 +55,8 @@ ActiveRecord::Schema.define(version: 2019_09_30_001024) do
     t.jsonb "details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "house_id"
+    t.index ["house_id"], name: "index_house_prices_on_house_id"
   end
 
   create_table "houses", force: :cascade do |t|
@@ -70,5 +76,7 @@ ActiveRecord::Schema.define(version: 2019_09_30_001024) do
   end
 
   add_foreign_key "home_owners_associations", "hoods"
+  add_foreign_key "house_metadata", "houses"
+  add_foreign_key "house_prices", "houses"
   add_foreign_key "houses", "hoods"
 end
