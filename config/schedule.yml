@@ -1,7 +1,3 @@
-hello_world_job:
-  cron: "* * * * *"
-  class: HelloWorldWorker
-
 zillow_zestimate:
   cron: "0 5 * * *"
   class: HouseValuationWorker
