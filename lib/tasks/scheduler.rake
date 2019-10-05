@@ -1,4 +1,4 @@
-desc 'This task is called by the Heroku scheduler add-on'
+desc 'Collect Zillow Zestimate for each House'
 task :house_valuation_collector => :environment do
   House.all.each do |house|
     next unless zpid = house.house_metadatum.zpid
