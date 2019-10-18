@@ -1,6 +1,8 @@
 module HappyHood
   module Slack
     class Client
+      extend ActionView::Helpers::NumberHelper
+
       def self.send_daily_price_summary
         message = daily_message
         slack.chat_postMessage(message)
@@ -34,7 +36,6 @@ module HappyHood
         end
 
         def self.currency_format(num)
-          include ActionView::Helpers::NumberHelper
           number_to_currency(num)
         end
     end
