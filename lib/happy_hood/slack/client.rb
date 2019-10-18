@@ -26,11 +26,11 @@ module HappyHood
             "Hood Valuation for #{Date.today}\n"\
             "```"\
             "Yesterday: #{currency_format(yesterdays_valuation)}\n"\
-            "Today:     #{currency_format(todays_valuation)} (#{currency_format(yesterdays_valuation-todays_valuation)})"\
+            "Today:     #{currency_format(todays_valuation)} (Difference: #{currency_format(yesterdays_valuation-todays_valuation)})"\
             "```"
           {
             text:       message,
-            icon_emoji: ":house_buildings:",
+            icon_emoji: ':house_buildings:',
             channel:    '#happy-hood',
           }
         end
