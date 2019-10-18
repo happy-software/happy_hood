@@ -1,32 +1,38 @@
 module HappyHood
   module Slack
     class Client
-      def self.send_daily_price_summary(summary)
-        three_day_valuation = house_prices_on(3.days.ago)
-        two_day_valuation   = house_prices_on(2.days.ago)
-        one_day_valuation   = house_prices_on(1.days.ago)
-
-        format_message(one_day_valuation, two_day_valuation, three_day_valuation)
+      def self.send_daily_price_summary
+        message = daily_message
+        slack.chat_postMessage(message)
       end
 
       private
 
-      def self.house_prices_on(date)
-        HousePrice.on(date).sum(:price)
-      end
+        def self.slack
+          @slack ||= ::Slack::Web::Client.new
+        end
 
-      def self.format_message(one_day_valuation, two_day_valuation, three_day_valuation)
-        formatted_three_day_valuation = Kernel::sprintf("%.2f", three_day_valuation)
-        formatted_two_day_valuation   = Kernel::sprintf("%.2f", two_day_valuation)
-        formatted_one_day_valuation   = Kernel::sprintf("%.2f", one_day_valuation)
+        def self.house_prices_on(date)
+          HousePrice.on(date).sum(:price)
+        end
 
-        formatted_two_day_diff = Kernel::sprintf("%.2f",three_day_valuation-two_day_valuation)
-        formatted_one_day_diff = Kernel::sprintf("%.2f",two_day_valuation-one_day_valuation)
+        def self.daily_message
+          yesterdays_valuation = house_prices_on(Date.yesterday)
+          todays_valuation     = house_prices_on(Date.today)
 
-        message = "Three Days Ago: $#{formatted_three_day_valuation}\n" \
-        "Two Days Ago: $#{formatted_two_day_valuation} ($#{formatted_two_day_diff})\n" \
-        "One Day Ago: $#{formatted_one_day_valuation} ($#{formatted_one_day_diff})"
-      end
+          message =
+            "Hood Valuation for #{Date.today}\n"\
+            "```"\
+            "Yesterday: $#{yesterdays_valuation}\n"\
+            "Today:     $#{todays_valuation} ($#{yesterdays_valuation-todays_valuation})"\
+            "```"
+          {
+            text:       message,
+            icon_emoji: ":house_buildings:",
+            channel:    '#happy-hood',
+          }
+        end
+
     end
   end
 end
