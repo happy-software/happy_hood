@@ -23,8 +23,8 @@ module HappyHood
           message =
             "Hood Valuation for #{Date.today}\n"\
             "```"\
-            "Yesterday: $#{yesterdays_valuation}\n"\
-            "Today:     $#{todays_valuation} ($#{yesterdays_valuation-todays_valuation})"\
+            "Yesterday: $#{currency_format(yesterdays_valuation)}\n"\
+            "Today:     $#{currency_format(todays_valuation)} ($#{currency_format(yesterdays_valuation-todays_valuation)})"\
             "```"
           {
             text:       message,
@@ -33,6 +33,10 @@ module HappyHood
           }
         end
 
+        def self.currency_format(num)
+          include ActionView::Helpers::NumberHelper
+          number_to_currency(num)
+        end
     end
   end
 end
