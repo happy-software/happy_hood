@@ -25,8 +25,8 @@ module HappyHood
           message =
             "Hood Valuation for #{Date.today}\n"\
             "```"\
-            "Yesterday: $#{currency_format(yesterdays_valuation)}\n"\
-            "Today:     $#{currency_format(todays_valuation)} ($#{currency_format(yesterdays_valuation-todays_valuation)})"\
+            "Yesterday: #{currency_format(yesterdays_valuation)}\n"\
+            "Today:     #{currency_format(todays_valuation)} (#{currency_format(yesterdays_valuation-todays_valuation)})"\
             "```"
           {
             text:       message,
