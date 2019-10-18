@@ -1,3 +1,5 @@
+require 'happy_hood/slack/client'
+
 desc 'Collect Zillow Zestimate for each House'
 task :house_valuation_collector => :environment do
   House.all.each do |house|
@@ -13,4 +15,6 @@ task :house_valuation_collector => :environment do
       p.save!
     end
   end
+
+  HappyHood::Slack::Client.send_daily_price_summary
 end

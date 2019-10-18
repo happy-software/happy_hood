@@ -59,3 +59,4 @@ gem 'sidekiq'
 gem 'sidekiq-cron'
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'rubillow' # Zillow API Wrapper
+gem 'slack-ruby-client'
