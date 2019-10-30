@@ -14,25 +14,28 @@ module HappyHood
           @slack ||= ::Slack::Web::Client.new
         end
 
-        def self.house_prices_on(date)
-          HousePrice.on(date).sum(:price)
+        def self.house_prices_on(hood, date)
+          hood.houses.map { |h| h.house_prices.on(date).last&.price }.compact.sum
         end
 
         def self.daily_message
-          yesterdays_valuation = house_prices_on(Date.yesterday)
-          todays_valuation     = house_prices_on(Date.today)
-
-          message =
-            "Hood Valuation for #{Date.today}\n"\
-            "```"\
-            "Yesterday: #{currency_format(yesterdays_valuation)}\n"\
-            "Today:     #{currency_format(todays_valuation)} (Difference: #{currency_format(todays_valuation-yesterdays_valuation)})"\
-            "```"
+          message = Hood.all.map { |hood| neighborhood_summary(hood) }.join("\n")
           {
             text:       message,
             icon_emoji: ':house_buildings:',
             channel:    '#happy-hood',
           }
+        end
+
+        def self.neighborhood_summary(hood)
+          yesterdays_valuation = house_prices_on(hood, Date.yesterday)
+          todays_valuation     = house_prices_on(hood, Date.today)
+
+          "```"\
+          "(#{hood.name}) - #{hood.houses.count} Happy Houses - (#{Date.today})\n"\
+          "Yesterday: #{currency_format(yesterdays_valuation)}\n"\
+          "Today:     #{currency_format(todays_valuation)} (Difference: #{currency_format(todays_valuation-yesterdays_valuation)})\n"\
+          "```"
         end
 
         def self.currency_format(num)
