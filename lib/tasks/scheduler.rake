@@ -41,12 +41,14 @@ task :collect_zpids => :environment do
 end
 
 desc 'Upload a CSV of a neighborhood'
-task :upload_neighborhood => :environment do
+task :upload_neighborhood, [:neighborhood_data] => :environment do |t, args|
+  puts "These are the arguments: #{args.inspect}"
   require 'csv'
   puts "There are #{::House.count} houses in the database."
   hood = Hood.find_or_create_by(name: 'The Cove', zip_code: '33615')
 
-  CSV.foreach(Rails.root.join('tmp', 'neighborhood.csv'), headers: true) do |row|
+  data = args.neighborhood_data
+  data.each do |row|
     street_address = row[0]
     city           = row[1]
     zip_code       = row[2]
