@@ -42,9 +42,8 @@ end
 
 desc 'Upload a CSV of a neighborhood'
 task :upload_neighborhood, [:neighborhood_data] => :environment do |t, args|
-  puts "These are the arguments: #{args.inspect}"
-  require 'csv'
-  puts "There are #{::House.count} houses in the database."
+  starting_count = House.count
+  puts "There are #{starting_count} houses in the database."
   hood = Hood.find_or_create_by(name: 'The Cove', zip_code: '33615')
 
   data = args.neighborhood_data
@@ -60,4 +59,8 @@ task :upload_neighborhood, [:neighborhood_data] => :environment do |t, args|
     h = House.create(address: address, hood: hood)
     HouseMetadatum.create(bedrooms: bedrooms, bathrooms: bathrooms, square_feet: square_feet, house: h)
   end
+
+  ending_count = House.count
+  puts "There are #{ending_count} houses in the database now. That's #{ending_count-starting_count} more"
 end
+
