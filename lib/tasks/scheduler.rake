@@ -50,12 +50,13 @@ task :upload_neighborhood, [:neighborhood_data] => :environment do |t, args|
   data.each do |row|
     street_address = row[0]
     city           = row[1]
-    zip_code       = row[2]
-    bedrooms       = row[3]
-    bathrooms      = row[4]
-    square_feet    = row[5]
+    state          = row[2]
+    zip_code       = row[3]
+    bedrooms       = row[4]
+    bathrooms      = row[5]
+    square_feet    = row[6]
 
-    address = {street_address: street_address, city: city, zip_code: zip_code}
+    address = {street_address: street_address, city: city, state: state, zip_code: zip_code}
     h = House.create(address: address, hood: hood)
     HouseMetadatum.create(bedrooms: bedrooms, bathrooms: bathrooms, square_feet: square_feet, house: h)
   end
