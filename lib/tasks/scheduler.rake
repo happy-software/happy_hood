@@ -45,9 +45,9 @@ task :upload_neighborhood, [:neighborhood_name, :neighborhood_zip_code, :neighbo
   starting_count = House.count
   puts "There are #{starting_count} houses in the database."
   puts "You have passed in #{args.count} arguments, with these keys: #{args.keys}"
-  hood = Hood.find_or_create_by(name: args.neighborhood_name, zip_code: args.neighborhood_zip_code)
+  hood = Hood.find_or_create_by(name: args[:neighborhood_name], zip_code: args[:neighborhood_zip_code])
 
-  args.neighborhood_data.each do |row|
+  args[:neighborhood_data].each do |row|
     street_address = row[0]&.strip
     city           = row[1]&.strip
     state          = row[2]&.strip
