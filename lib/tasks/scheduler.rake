@@ -47,13 +47,13 @@ task :upload_neighborhood, [:neighborhood_name, :neighborhood_zip_code, :neighbo
   hood = Hood.find_or_create_by(name: args.neighborhood_name, zip_code: args.neighborhood_zip_code)
 
   args.neighborhood_data.each do |row|
-    street_address = row[0]
-    city           = row[1]
-    state          = row[2]
-    zip_code       = row[3]
-    bedrooms       = row[4]
-    bathrooms      = row[5]
-    square_feet    = row[6]
+    street_address = row[0]&.strip
+    city           = row[1]&.strip
+    state          = row[2]&.strip
+    zip_code       = row[3]&.strip
+    bedrooms       = row[4]&.strip
+    bathrooms      = row[5]&.strip
+    square_feet    = row[6]&.strip
 
     address = {street_address: street_address, city: city, state: state, zip_code: zip_code}
     h = House.create(address: address, hood: hood)
