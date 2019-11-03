@@ -44,6 +44,7 @@ desc 'Upload a CSV of a neighborhood'
 task :upload_neighborhood, [:neighborhood_name, :neighborhood_zip_code, :neighborhood_data] => :environment do |t, args|
   starting_count = House.count
   puts "There are #{starting_count} houses in the database."
+  puts "You have passed in #{args.count} arguments, with these keys: #{args.keys}"
   hood = Hood.find_or_create_by(name: args.neighborhood_name, zip_code: args.neighborhood_zip_code)
 
   args.neighborhood_data.each do |row|
