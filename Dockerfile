@@ -1,5 +1,5 @@
 # Use an official Ruby runtime as a parent image
-FROM ruby:2.5.1
+FROM ruby:2.7.3
 LABEL maintainer="Hebron George <hebrontgeorge@gmail.com>"
 
 ENV APP_DIR="/app/"
@@ -13,12 +13,7 @@ RUN apt-get update && \
 
 # Try doing the bundle stuff first
 COPY Gemfile Gemfile.lock $APP_DIR
-
-# Note: this is a manual step
-# unset bundler because old docker image sets bundler version
-ENV BUNDLER_VERSION="2.2.16"
-RUN gem install bundler -v 2.2.16 && \
-  bundle install
+RUN bundle install
 
 # Copy the current directory contents into the container at /app
 COPY . $APP_DIR
