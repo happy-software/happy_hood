@@ -1,5 +1,3 @@
-require "spec_helper"
-
 describe "Custom installed gems" do
   describe "rubillow" do
     it "exists" do
