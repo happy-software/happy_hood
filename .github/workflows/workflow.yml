@@ -54,3 +54,10 @@ jobs:
 
       - name: Run rspec tests
         run: bundle exec rspec
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
