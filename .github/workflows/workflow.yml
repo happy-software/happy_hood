@@ -19,3 +19,8 @@ jobs:
       run: bundle install
     - name: Run tests
       run: bundle exec rspec
+      services:
+        postgres:
+          image: postgres:latest
+          ports:
+          - 5432:5432
