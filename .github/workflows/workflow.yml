@@ -11,6 +11,12 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+        - 5432:5432
+        
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -19,8 +25,3 @@ jobs:
       run: bundle install
     - name: Run tests
       run: bundle exec rspec
-      services:
-        postgres:
-          image: postgres:latest
-          ports:
-          - 5432:5432
