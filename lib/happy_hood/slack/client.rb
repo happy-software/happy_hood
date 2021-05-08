@@ -15,7 +15,8 @@ module HappyHood
         end
 
         def self.house_prices_on(hood, date)
-          hood.houses.map { |h| h.house_prices.on(date).last&.price }.compact.sum
+          normalized_date = date.strftime("%Y-%m-%d")
+          hood.houses.map { |h| h.price_history.dig(normalized_date) }.compact.sum
         end
 
         def self.daily_message
