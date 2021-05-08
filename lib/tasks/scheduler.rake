@@ -6,13 +6,13 @@ task :house_valuation_collector => :environment do
     next unless zpid = house&.house_metadatum&.zpid
 
     property = Rubillow::HomeValuation.zestimate({ :zpid => zpid })
+
     if property.success?
-      p = house.house_prices.new
-      p.valuation_date = Date.current
-      p.source = 'zillow'
-      p.price = property.price
-      p.details = property.as_json
-      p.save!
+      price_history = house.price_history || {}
+      normalized_valuation_date = Date.current.strftime("%Y-%m-%d")
+      price_history[normalized_valuation_date] ||= property.price
+      house.price_history = price_history
+      house.save!
     end
   end
 
