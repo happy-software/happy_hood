@@ -31,7 +31,7 @@ module HappyHood
         def self.neighborhood_summary(hood)
           yesterdays_valuation = house_prices_on(hood, Date.yesterday)
           todays_valuation     = house_prices_on(hood, Date.today)
-          difference           = todays_valuation&.-(yesterdays_valuation)
+          difference           = todays_valuation - yesterdays_valuation
 
           "```"\
           "(#{hood.name}) - #{hood.houses.count} Happy Houses - (#{Date.today})\n"\
