@@ -14,11 +14,6 @@ module HappyHood
           @slack ||= ::Slack::Web::Client.new
         end
 
-        def self.house_prices_on(hood, date)
-          normalized_date = date.strftime("%Y-%m-%d")
-          hood.houses.map { |h| h.price_history.dig(normalized_date).to_f }.compact.sum
-        end
-
         def self.daily_message
           message = Hood.all.map { |hood| neighborhood_summary(hood) }.join("\n")
           {
@@ -29,8 +24,8 @@ module HappyHood
         end
 
         def self.neighborhood_summary(hood)
-          yesterdays_valuation = house_prices_on(hood, Date.yesterday)
-          todays_valuation     = house_prices_on(hood, Date.today)
+          yesterdays_valuation = hood.valuation_on(Date.yesterday)
+          todays_valuation     = hood.valuation_on(Date.today)
           difference           = todays_valuation - yesterdays_valuation
 
           "```"\
