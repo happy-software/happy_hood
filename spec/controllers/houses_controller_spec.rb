@@ -44,12 +44,12 @@ describe HousesController, type: :request do
         {
           '2021-01-03' => 125,
           '2021-01-04' => 126,
-        }
+        }.to_json
       end
       it 'should append imported data to house.price_history' do
         expect(house.price_history).to eq(history)
         post "/house_valuations/#{house_metadatum.zpid}", params: {valuations: valuations_to_import}
-        expect(house.reload.price_history).to eq(history.merge(valuations_to_import))
+        expect(house.reload.price_history).to eq(history.merge(JSON.parse valuations_to_import))
         expect(response.status).to eq(200)
       end
     end

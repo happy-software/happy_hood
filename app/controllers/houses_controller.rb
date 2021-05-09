@@ -9,7 +9,7 @@ class HousesController < ApplicationController
 
   def import
     return render json: {data: "Could not find a house with zpid: #{zpid}"}, status: 404 unless house_details
-    return render json: {data: "Missing or improper valuation data"}, status: 400 unless valuations_param
+    return render json: {data: "Missing or improper valuation data"},        status: 400 unless valuations_param
 
     # This data write could be moved into it's own module or worker or something but whatever, getting it working for now
     price_history = house.price_history || {}
@@ -30,7 +30,8 @@ class HousesController < ApplicationController
   end
 
   def valuations_param
-    params[:valuations]
+    return unless params[:valuations]
+    JSON.parse params[:valuations].to_s
   end
 
   def house_details
