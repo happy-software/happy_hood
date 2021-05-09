@@ -31,7 +31,7 @@ class HousesController < ApplicationController
 
   def valuations_param
     return unless params[:valuations]
-    JSON.parse params[:valuations].to_s
+    JSON.parse params[:valuations]
   end
 
   def house_details
