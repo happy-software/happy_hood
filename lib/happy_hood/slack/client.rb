@@ -15,24 +15,26 @@ module HappyHood
         end
 
         def self.daily_message
-          message = Hood.all.map { |hood| neighborhood_summary(hood) }.join("\n")
+          neighborhood_differences = DailyDifferenceCalculator.new(Hood.all).differences
+          messages  = summarize_differences(neighborhood_differences)
+
+          messages = messages.empty? ? 'No changes for any HappyHood' : messages
           {
-            text:       message,
+            text:       messages,
             icon_emoji: ':house_buildings:',
             channel:    '#happy-hood',
           }
         end
 
-        def self.neighborhood_summary(hood)
-          yesterdays_valuation = hood.valuation_on(Date.yesterday)
-          todays_valuation     = hood.valuation_on(Date.today)
-          difference           = todays_valuation - yesterdays_valuation
 
-          "```"\
-          "(#{hood.name}) - #{hood.houses.count} Happy Houses - (#{Date.today})\n"\
-          "Yesterday: #{currency_format(yesterdays_valuation)}\n"\
-          "Today:     #{currency_format(todays_valuation)} (Difference: #{currency_format(difference)})\n"\
-          "```"
+        def self.summarize_differences(differences)
+          differences.reject { |d| d.valuation_difference.zero? }.map do |d|
+            "````"\
+            "(#{d.name}) - #{d.house_count} Happy Houses - (#{d.valuation_date})\n"\
+            "Yesterday: #{currency_format(d.yesterdays_valuation)}\n"\
+            "Today:     #{currency_format(d.todays_valuation)} (Difference: #{currency_format(d.valuation_difference)})\n"\
+            "```"
+          end.join("\n")
         end
 
         def self.currency_format(num)
