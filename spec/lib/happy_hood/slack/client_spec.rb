@@ -1,3 +1,4 @@
+require "rails_helper"
 require_relative "#{Rails.root.join("lib", "happy_hood", "slack", "client")}"
 
 describe HappyHood::Slack::Client do

@@ -19,7 +19,7 @@ class DailyDifferenceCalculator
     yesterdays_valuation = hood.valuation_on(Date.yesterday)
     todays_valuation     = hood.valuation_on(Date.today)
     difference           = todays_valuation - yesterdays_valuation
-    house_count         = hood.houses.count
+    house_count          = hood.houses.count
     average_house_diff   = difference / house_count if house_count > 1
 
     HoodSummary.new(
