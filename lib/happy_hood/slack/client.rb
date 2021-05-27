@@ -29,11 +29,23 @@ module HappyHood
 
         def self.summarize_differences(differences)
           differences.reject { |d| d.valuation_difference.zero? }.map do |d|
-            "```"\
-            "(#{d.name}) - #{d.house_count} Happy Houses - (#{d.valuation_date})\n"\
-            "Yesterday: #{currency_format(d.yesterdays_valuation)}\n"\
-            "Today:     #{currency_format(d.todays_valuation)} (Difference: #{currency_format(d.valuation_difference)})\n"\
-            "```"
+            average_house_difference = if d.house_count > 1
+              avg_diff = d.valuation_difference / d.house_count
+
+              avg_diff_string = avg_diff.positive? ? "+#{currency_format(avg_diff)}" : "#{currency_format(avg_diff)}"
+
+              "(#{avg_diff_string} avg/house)"
+            end
+
+            <<~SUMMARY.strip
+              ```
+              (#{d.name}) - #{d.house_count} Happy Houses
+
+              Yesterday: #{currency_format(d.yesterdays_valuation)}
+              Today:     #{currency_format(d.todays_valuation)}
+              Difference: #{currency_format(d.valuation_difference)} #{average_house_difference}
+              ```
+            SUMMARY
           end.join("\n")
         end
 

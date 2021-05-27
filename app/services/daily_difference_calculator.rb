@@ -29,5 +29,4 @@ class DailyDifferenceCalculator
       Date.today
     )
   end
-
 end
