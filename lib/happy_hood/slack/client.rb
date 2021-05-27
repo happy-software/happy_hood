@@ -11,7 +11,7 @@ module HappyHood
       private
 
         def self.slack
-          @slack ||= ::Slack::Web::Client.new
+          ::Slack::Web::Client.new
         end
 
         def self.daily_message
