@@ -39,10 +39,10 @@ module HappyHood
 
             <<~SUMMARY.strip
               ```
-              (#{d.name}) - #{d.house_count} Happy Houses
+              #{d.name} (#{d.house_count} Happy #{"House".pluralize(d.house_count)})
 
-              Yesterday: #{currency_format(d.yesterdays_valuation)}
-              Today:     #{currency_format(d.todays_valuation)}
+              Yesterday:  #{currency_format(d.yesterdays_valuation)}
+              Today:      #{currency_format(d.todays_valuation)}
               Difference: #{currency_format(d.valuation_difference)} #{average_house_difference}
               ```
             SUMMARY
