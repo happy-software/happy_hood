@@ -11,7 +11,7 @@ module HappyHood
       private
 
         def self.slack
-          @slack ||= ::Slack::Web::Client.new
+          ::Slack::Web::Client.new
         end
 
         def self.daily_message
@@ -29,11 +29,23 @@ module HappyHood
 
         def self.summarize_differences(differences)
           differences.reject { |d| d.valuation_difference.zero? }.map do |d|
-            "```"\
-            "(#{d.name}) - #{d.house_count} Happy Houses - (#{d.valuation_date})\n"\
-            "Yesterday: #{currency_format(d.yesterdays_valuation)}\n"\
-            "Today:     #{currency_format(d.todays_valuation)} (Difference: #{currency_format(d.valuation_difference)})\n"\
-            "```"
+            average_house_difference = if d.average_house_diff
+              avg_diff_string = d.average_house_diff.positive? ? "+#{currency_format(d.average_house_diff)}" : currency_format(d.average_house_diff)
+
+              "(#{avg_diff_string} avg/house)"
+            end
+
+            difference = d.valuation_difference.positive? ? "+#{d.valuation_difference}" : d.valuation_difference
+
+            <<~SUMMARY.strip
+              ```
+              #{d.name} (#{d.house_count} Happy #{"House".pluralize(d.house_count)})
+
+              Yesterday:  #{currency_format(d.yesterdays_valuation)}
+              Today:      #{currency_format(d.todays_valuation)}
+              Difference: #{currency_format(difference)} #{average_house_difference}
+              ```
+            SUMMARY
           end.join("\n")
         end
 
