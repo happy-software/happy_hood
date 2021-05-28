@@ -39,7 +39,6 @@ describe DailyDifferenceCalculator do
         expect(difference.todays_valuation).to eq(597_000.00)
         expect(difference.house_count).to eq(2)
         expect(difference.average_house_diff).to eq(8_500.00)
-        expect(difference.valuation_date).to eq(Date.today)
       end
     end
   end

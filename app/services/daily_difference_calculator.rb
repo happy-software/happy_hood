@@ -13,7 +13,7 @@ class DailyDifferenceCalculator
 
   private
 
-  HoodSummary = Struct.new(:name, :yesterdays_valuation, :todays_valuation, :valuation_difference, :house_count, :valuation_date, :average_house_diff, keyword_init: true)
+  HoodSummary = Struct.new(:name, :yesterdays_valuation, :todays_valuation, :valuation_difference, :house_count, :average_house_diff, keyword_init: true)
 
   def difference_details(hood)
     yesterdays_valuation = hood.valuation_on(Date.yesterday)
@@ -29,7 +29,6 @@ class DailyDifferenceCalculator
       valuation_difference: difference,
       house_count: house_count,
       average_house_diff: average_house_diff,
-      valuation_date: Date.today,
     )
   end
 end
