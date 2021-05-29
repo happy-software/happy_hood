@@ -68,8 +68,12 @@ task :upload_neighborhood, [:hood_onboarding_csv_path] => :environment do |t, ar
 
   csv_entries = CSV.read(args[:hood_onboarding_csv_path], headers: true).map(&:to_h)
 
-  if csv_entries.map(&:keys) != NeighborhoodCsvHeaders
-    Rails.logger.error "#{args[:hood_onboarding_csv_path]} does not have valid headers. Valid headers: #{NeighborhoodCsvHeaders}"
+  if csv_entries.flat_map(&:keys).uniq != NeighborhoodCsvHeaders
+    Rails.logger.error <<~ERR
+      #{args[:hood_onboarding_csv_path]} does not have valid headers.
+      Got: #{csv_entries.flat_map(&:keys).uniq}
+      Want: #{NeighborhoodCsvHeaders}
+    ERR
     exit(1)
   end
 
