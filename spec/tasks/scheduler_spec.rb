@@ -38,7 +38,7 @@ describe "scheduler.rake rake tasks" do
         expect(Hood.find_by(name: hood_name)).to be_nil
         expect(House.count).to eq(0)
 
-        task.invoke("Schitt's Creek", "13459", [
+        task.invoke("Schitt's Creek", "33634", [
           ["8106 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1872", "2"],
           ["8108 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1816", "1"],
           ["8110 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1584", "1"]
