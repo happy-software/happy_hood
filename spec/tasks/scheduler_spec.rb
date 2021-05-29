@@ -14,38 +14,70 @@ describe "scheduler.rake rake tasks" do
     task.reenable 
   end
 
+  describe "generate_hood_onboarding_csv" do
+    let(:task_name) { "generate_hood_onboarding_csv" }
+
+    it "creates a csv with the correct headers" do
+      Tempfile.create(["onboard_neighborhood", ".csv"]) do |tmp_file|
+        allow(File).to receive(:open)
+          .with(a_string_including("onboard_neighborhood.csv"), "w", a_hash_including(:universal_newline))
+          .and_return(tmp_file)
+
+        task.invoke
+
+        expect(File.read(tmp_file.path).strip).to eq(NeighborhoodCsvHeaders.join(","))
+      end
+    end
+  end
+
   describe "upload_neighborhood" do
     let(:task_name) { "upload_neighborhood" }
 
-    let(:hood_name) { "Schitt's Creek" }
-    let(:hood_zip_code) { "13459" }
+    context "with a bad csv" do
+      it "raises an error" do
+        Tempfile.create(["bad", ".csv"]) do |tmp_file|
+          tmp_file.write "my,bad,headers,heh,heh,heh"
+          tmp_file.rewind
+
+          expect { task.invoke(tmp_file.path) }.to raise_error(ArgumentError, /does not have valid headers./)
+        end
+      end
+    end
 
     context "without neighborhood data" do
       it "creates the neighborhood without houses" do
-        neighborhood_data = []
+        csv_file_path = Rails.root.join("spec", "fixtures", "empty_onboarding_neighborhood.csv")
 
-        expect(Hood.find_by(name: hood_name)).to be_nil
+        csv_entries = CSV.read(csv_file_path, headers: true).map(&:to_h)
+        neighborhood_names = csv_entries.map { |entry| entry["neighborhood_name"] }.uniq
 
-        expect { task.invoke(hood_name, hood_zip_code, neighborhood_data) }.not_to change { House.count }
+        expect(Hood.where(name: neighborhood_names)).to be_empty
+        expect(House.count).to eq(0)
 
-        expect(Hood.find_by(name: hood_name)).to be_an_instance_of(Hood)
-          .and have_attributes(name: hood_name, zip_code: hood_zip_code)
+        task.invoke(csv_file_path)
+
+        hoods = Hood.where(name: neighborhood_names)
+        expect(hoods.size).to eq(1)
+        expect(hoods.first.houses.count).to eq(0)
       end
     end
 
     context "with neighborhood data" do
       it "creates each house provided" do
-        expect(Hood.find_by(name: hood_name)).to be_nil
+        csv_file_path = Rails.root.join("spec", "fixtures", "nonempty_onboarding_neighborhood.csv")
+
+        csv_entries = CSV.read(csv_file_path, headers: true).map(&:to_h)
+        neighborhood_names = csv_entries.map { |entry| entry["neighborhood_name"] }.uniq
+
+        expect(Hood.where(name: neighborhood_names)).to be_empty
         expect(House.count).to eq(0)
 
-        task.invoke("Schitt's Creek", "33634", [
-          ["8106 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1872", "2"],
-          ["8108 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1816", "1"],
-          ["8110 Muddy Pines Pl", "Tampa", "FL", "33635", "3", "2.5", "1584", "1"]
-        ])
+        task.invoke(csv_file_path)
 
-        hood = Hood.find_by(name: hood_name)
-        expect(hood).not_to be_nil
+        hoods = Hood.where(name: neighborhood_names)
+        expect(hoods.size).to eq(1)
+
+        hood = hoods.first
         expect(hood.houses.count).to eq(3)
         expect(hood.houses.map(&:address)).to include(
           hash_including("city" => "Tampa", "state" => "FL", "street_address" => "8106 Muddy Pines Pl", "zip_code" => "33635"),
