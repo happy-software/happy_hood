@@ -4,7 +4,7 @@ require "rake"
 # Load all rake tasks once, available for re-use in each example
 Rails.application.load_tasks
 
-describe "scheduler.rake rake tasks" do
+describe "neighborhood.rake rake tasks" do
   let(:task) { Rake::Task[task_name] }
   let(:task_name) { "my:rake:task" }
 
@@ -15,7 +15,7 @@ describe "scheduler.rake rake tasks" do
   end
 
   describe "generate_hood_onboarding_csv" do
-    let(:task_name) { "generate_hood_onboarding_csv" }
+    let(:task_name) { "neighborhood:generate_onboarding_csv" }
 
     it "creates a csv with the correct headers" do
       Tempfile.create(["onboard_neighborhood", ".csv"]) do |tmp_file|
@@ -31,7 +31,7 @@ describe "scheduler.rake rake tasks" do
   end
 
   describe "upload_neighborhood" do
-    let(:task_name) { "upload_neighborhood" }
+    let(:task_name) { "neighborhood:upload" }
 
     context "with a bad csv" do
       it "raises an error" do

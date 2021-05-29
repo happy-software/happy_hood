@@ -2,6 +2,28 @@
 
 Make your entire neighborhood happy.
 
+# Onboarding a new neighborhood
+
+This process requires two steps. Generating a CSV, and then ingesting it.
+
+Run the following to generate a csv template:
+
+```shell
+bundle exec rails neighborhood:generate_onboarding_csv
+
+# Creates <TIMESTAMP>_onboard_neighborhood.csv file
+```
+
+Fill out the template with the neighborhood and houses you want to include. Each
+neighborhood entry will be deduplicated, so you will have several rows with
+identical columns. For example, refer to `spec/fixtures/nonempty_onboarding_neighborhood.csv`.
+
+Once the template is filled out, you can ingest it by running:
+
+```shell
+bundle exec rails neighborhood:upload[path/to/csv]
+```
+
 ## Development
 
 ### Docker
