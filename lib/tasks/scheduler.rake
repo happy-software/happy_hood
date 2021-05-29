@@ -40,6 +40,28 @@ task :collect_zpids => :environment do
   puts "Missing ZPIDs for #{missing_zpids.reload.where(zpid: nil).count}"
 end
 
+NeighborhoodCsvHeaders = %w(
+  neighborhood_name
+  neighborhood_zip_code
+  house_street_address
+  house_city
+  house_state
+  house_zip_code
+  house_bedrooms
+  house_bathrooms
+  house_square_feet
+).freeze
+
+desc "Generate a csv to onboard a neighborhood"
+task generate_hood_onboarding_csv: :environment do |t|
+  require "csv"
+
+  filename = "#{DateTime.now.to_i}_onboard_neighborhood.csv"
+  CSV.open(filename, "w") { |csv| csv << NeighborhoodCsvHeaders }
+
+  Rails.logger.info "Created #{filename}"
+end
+
 desc 'Upload a CSV of a neighborhood'
 task :upload_neighborhood, [:neighborhood_name, :neighborhood_zip_code, :neighborhood_data] => :environment do |t, args|
   starting_count = House.count

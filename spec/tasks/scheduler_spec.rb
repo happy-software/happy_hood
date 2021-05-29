@@ -14,6 +14,22 @@ describe "scheduler.rake rake tasks" do
     task.reenable 
   end
 
+  describe "generate_hood_onboarding_csv" do
+    let(:task_name) { "generate_hood_onboarding_csv" }
+
+    it "creates a csv with the correct headers" do
+      Tempfile.create(["onboard_neighborhood", ".csv"]) do |tmp_file|
+        allow(File).to receive(:open)
+          .with(a_string_including("onboard_neighborhood.csv"), "w", a_hash_including(:universal_newline))
+          .and_return(tmp_file)
+
+        task.invoke
+
+        expect(File.read(tmp_file.path).strip).to eq(NeighborhoodCsvHeaders.join(","))
+      end
+    end
+  end
+
   describe "upload_neighborhood" do
     let(:task_name) { "upload_neighborhood" }
 
