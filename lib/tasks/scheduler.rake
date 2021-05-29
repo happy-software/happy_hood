@@ -68,6 +68,11 @@ task :upload_neighborhood, [:hood_onboarding_csv_path] => :environment do |t, ar
 
   csv_entries = CSV.read(args[:hood_onboarding_csv_path], headers: true).map(&:to_h)
 
+  if csv_entries.map(&:keys) != NeighborhoodCsvHeaders
+    Rails.logger.error "#{args[:hood_onboarding_csv_path]} does not have valid headers. Valid headers: #{NeighborhoodCsvHeaders}"
+    exit(1)
+  end
+
   csv_entries.each do |csv_entry|
     hood = Hood.find_or_create_by(name: csv_entry["neighborhood_name"], zip_code: csv_entry["neighborhood_zip_code"])
 
