@@ -33,6 +33,17 @@ describe "scheduler.rake rake tasks" do
   describe "upload_neighborhood" do
     let(:task_name) { "upload_neighborhood" }
 
+    context "with a bad csv" do
+      it "raises an error" do
+        Tempfile.create(["bad", ".csv"]) do |tmp_file|
+          tmp_file.write "my,bad,headers,heh,heh,heh"
+          tmp_file.rewind
+
+          expect { task.invoke(tmp_file.path) }.to raise_error(ArgumentError, /does not have valid headers./)
+        end
+      end
+    end
+
     context "without neighborhood data" do
       it "creates the neighborhood without houses" do
         csv_file_path = Rails.root.join("spec", "fixtures", "empty_onboarding_neighborhood.csv")
