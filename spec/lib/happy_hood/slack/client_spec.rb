@@ -111,8 +111,8 @@ describe HappyHood::Slack::Client do
             a_hash_including(
               text: a_string_including(
                 hood.name,
-                "12 days ago:   $40",
-                "Difference: $8.00",
+                "#{12.days.ago.strftime("%b %d, %Y")}: $40.00 (12 days ago)",
+                "Difference:   $8.00",
                 "(+$4.00 avg/house)",
               )
             )
@@ -136,7 +136,7 @@ describe HappyHood::Slack::Client do
 
           expect(mock_slack_client).to have_received(:chat_postMessage).with(
             a_hash_including(
-              text: a_string_including(hood.name, "Difference: -$5.00", "-$2.50 avg/house")
+              text: a_string_including(hood.name, "Difference:   -$5.00", "(-$2.50 avg/house)")
             )
           )
         end
@@ -159,7 +159,7 @@ describe HappyHood::Slack::Client do
           # (new price - old price) / houses.size
           expect(mock_slack_client).to have_received(:chat_postMessage).with(
             a_hash_including(
-              text: a_string_including(hood.name, "Difference: $395.00", "(+$197.50 avg/house)")
+              text: a_string_including(hood.name, "Difference:   $395.00", "(+$197.50 avg/house)")
             )
           )
         end

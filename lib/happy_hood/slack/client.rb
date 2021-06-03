@@ -39,7 +39,7 @@ module HappyHood
             difference = d.valuation_difference.positive? ? "+#{d.valuation_difference}" : d.valuation_difference
 
             last_day_string = if d.last_valuation_date.nil? || d.last_valuation_date == 1.day.ago.to_date
-              "Yesterday"
+              "1 day ago"
             else
               # we offset the time here a bit
               # time_ago_in_words(1.day.ago.to_date) == "2 days"
@@ -51,9 +51,9 @@ module HappyHood
               ```
               #{d.name} (#{d.house_count} Happy #{"House".pluralize(d.house_count)})
 
-              #{last_day_string}:   #{currency_format(d.last_valuation)}
-              Today:      #{currency_format(d.todays_valuation)}
-              Difference: #{currency_format(difference)} #{average_house_difference}
+              #{short_date_format(d.last_valuation_date)}: #{currency_format(d.last_valuation)} (#{last_day_string})
+              #{short_date_format(Date.today)}: #{currency_format(d.todays_valuation)}
+              Difference:   #{currency_format(difference)} #{average_house_difference}
               ```
             SUMMARY
           end.join("\n")
@@ -61,6 +61,10 @@ module HappyHood
 
         def self.currency_format(num)
           number_to_currency(num)
+        end
+
+        def self.short_date_format(date)
+          date.strftime("%b %d, %Y")
         end
     end
   end
