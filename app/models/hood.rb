@@ -37,6 +37,6 @@ class Hood < ApplicationRecord
   def valuation_on(date)
     return 0 if date.nil?
 
-    houses.map { |house| house.valuation_on(date) }.sum
+    houses.sum { |house| house.valuation_on(date) }
   end
 end
