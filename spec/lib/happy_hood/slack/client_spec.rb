@@ -24,6 +24,25 @@ describe HappyHood::Slack::Client do
       end
     end
 
+    context "when a neighborhood does not have houses that were valuated on the same day" do
+      it "posts a message saying no updates" do
+        hood = Hood.create(name: "Schitt's Creek")
+        hood.houses.create(price_history: {
+          string_date(1.day.ago) => 25,
+        })
+
+        hood.houses.create(price_history: {
+          string_date(2.day.ago) => 26
+        })
+
+        described_class.send_daily_price_summary
+
+        expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
+          text: "No changes for any HappyHood"
+        ))
+      end
+    end
+
     context "when the neighborhood had valuation changes" do
       let(:hood) { Hood.create(name: "Schitt's Creek") }
       let(:hood2) { Hood.create(name: "Del Boca Vista") }
@@ -73,6 +92,34 @@ describe HappyHood::Slack::Client do
         end
       end
 
+      context "when a neighborhood has houses that were valuated prior to yesterday and valuated today" do
+        it "posts a message with the delta" do
+          # The case when we stopped updating house prices for some reason
+          # like running out of dynos
+          hood.houses.create(price_history: {
+            string_date(12.days.ago) => 20,
+            string_date(Date.today) => 24,
+          })
+          hood.houses.create(price_history: {
+            string_date(12.days.ago) => 20,
+            string_date(Date.today) => 24,
+          })
+
+          described_class.send_daily_price_summary
+
+          expect(mock_slack_client).to have_received(:chat_postMessage).with(
+            a_hash_including(
+              text: a_string_including(
+                hood.name,
+                "#{12.days.ago.strftime("%b %d, %Y")}: $40.00 (12 days ago)",
+                "Difference:   $8.00",
+                "(+$4.00 avg/house)",
+              )
+            )
+          )
+        end
+      end
+
       context "a neighborhood that has dropped in valuation" do
         it "shows a negative sign to indicate a drop in price" do
           hood.houses.create(price_history: {
@@ -89,7 +136,7 @@ describe HappyHood::Slack::Client do
 
           expect(mock_slack_client).to have_received(:chat_postMessage).with(
             a_hash_including(
-              text: a_string_including(hood.name, "Difference: -$5.00", "-$2.50 avg/house")
+              text: a_string_including(hood.name, "Difference:   -$5.00", "(-$2.50 avg/house)")
             )
           )
         end
@@ -112,7 +159,7 @@ describe HappyHood::Slack::Client do
           # (new price - old price) / houses.size
           expect(mock_slack_client).to have_received(:chat_postMessage).with(
             a_hash_including(
-              text: a_string_including(hood.name, "Difference: $395.00", "(+$197.50 avg/house)")
+              text: a_string_including(hood.name, "Difference:   $395.00", "(+$197.50 avg/house)")
             )
           )
         end

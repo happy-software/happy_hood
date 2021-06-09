@@ -35,7 +35,7 @@ describe DailyDifferenceCalculator do
         difference = differences.first
 
         expect(difference.name).to eq("Schitt's Creek")
-        expect(difference.yesterdays_valuation).to eq(580_000.00)
+        expect(difference.last_valuation).to eq(580_000.00)
         expect(difference.todays_valuation).to eq(597_000.00)
         expect(difference.house_count).to eq(2)
         expect(difference.average_house_diff).to eq(8_500.00)

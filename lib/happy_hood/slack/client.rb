@@ -2,6 +2,7 @@ module HappyHood
   module Slack
     class Client
       extend ActionView::Helpers::NumberHelper
+      extend ActionView::Helpers::DateHelper
 
       def self.send_daily_price_summary
         message = daily_message
@@ -36,14 +37,15 @@ module HappyHood
             end
 
             difference = d.valuation_difference.positive? ? "+#{d.valuation_difference}" : d.valuation_difference
+            last_day_string = "(#{time_ago_in_words(d.last_valuation_date + 1.day)} ago)" unless d.last_valuation_date.nil?
 
             <<~SUMMARY.strip
               ```
               #{d.name} (#{d.house_count} Happy #{"House".pluralize(d.house_count)})
 
-              Yesterday:  #{currency_format(d.yesterdays_valuation)}
-              Today:      #{currency_format(d.todays_valuation)}
-              Difference: #{currency_format(difference)} #{average_house_difference}
+              #{short_date_format(d.last_valuation_date)}: #{currency_format(d.last_valuation)} #{last_day_string}
+              #{short_date_format(Date.today)}: #{currency_format(d.todays_valuation)}
+              Difference:   #{currency_format(difference)} #{average_house_difference}
               ```
             SUMMARY
           end.join("\n")
@@ -51,6 +53,10 @@ module HappyHood
 
         def self.currency_format(num)
           number_to_currency(num)
+        end
+
+        def self.short_date_format(date)
+          date.strftime("%b %d, %Y")
         end
     end
   end
