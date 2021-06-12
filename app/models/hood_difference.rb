@@ -1,5 +1,5 @@
   class HoodDifference
-    def initialize(hood, start_date: nil, end_date: Date.today)
+    def initialize(hood, start_date:, end_date:)
       @hood = hood
       @start_date = start_date
       @end_date = end_date

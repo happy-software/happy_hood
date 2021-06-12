@@ -1,5 +1,5 @@
 class DifferenceCalculator
-  def initialize(hoods, start_date: nil, end_date: Date.today)
+  def initialize(hoods, start_date:, end_date:)
     @hoods = hoods
     @start_date = start_date
     @end_date = end_date
