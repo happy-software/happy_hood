@@ -2,6 +2,10 @@ class Hood < ApplicationRecord
   has_many :houses
   has_many :home_owners_associations
 
+  def valuation_on_or_before(date)
+    valuation_before(date + 1.day)
+  end
+
   def valuation_before(date)
     house_count = houses.count
     normalized_date = date.to_date

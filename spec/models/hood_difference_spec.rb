@@ -95,35 +95,6 @@ describe HoodDifference do
           )
         end
       end
-
-      context "when no start date is provided" do
-        it "defaults to yesterday" do
-          hood = Hood.create(name: "Schitt's Creek")
-          hood.houses.create(price_history: {
-            2.days.ago.strftime("%Y-%m-%d") => 300_000,
-            1.day.ago.strftime("%Y-%m-%d") => 301_000,
-            Date.today.strftime("%Y-%m-%d") => 310_000,
-          })
-          hood.houses.create(price_history: {
-            2.days.ago.strftime("%Y-%m-%d") => 279_000,
-            1.day.ago.strftime("%Y-%m-%d") => 280_000,
-            Date.today.strftime("%Y-%m-%d") => 287_000,
-          })
-
-          instance = described_class.new(hood, end_date: Date.today)
-
-          expect(instance).to have_attributes(
-            hood_name: "Schitt's Creek",
-            earliest_valuation: 581_000.00,
-            earliest_valuation_date: 1.day.ago.to_date,
-            latest_valuation: 597_000.00,
-            latest_valuation_date: Date.today,
-            valuation_difference: 16_000.00,
-            house_count: 2,
-            average_house_difference: 8_000.00,
-          )
-        end
-      end
     end
   end
 end

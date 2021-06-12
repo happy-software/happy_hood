@@ -18,32 +18,19 @@
     end
 
     def earliest_valuation
-      @earliest_valuation ||= begin
-                                calculate_and_memoize_earliest_valuation
-                                @earliest_valuation
-                              end
+      @earliest_valuation ||= get_earliest_valuation[:valuation]
     end
 
     def earliest_valuation_date
-      @earliest_valuation_date ||= begin
-                                     calculate_and_memoize_earliest_valuation
-                                     @earliest_valuation_date
-                                   end
+      @earliest_valuation_date ||= get_earliest_valuation[:date]
     end
 
     def latest_valuation
-      @latest_valuation ||= begin
-                              calculate_and_memoize_latest_valuation
-                              @latest_valuation
-                            end
+      @latest_valuation ||= get_latest_valuation[:valuation]
     end
 
     def latest_valuation_date
-      @latest_valuation_date ||= begin
-                                   calculate_and_memoize_latest_valuation
-
-                                   @latest_valuation_date
-                                 end
+      @latest_valuation_date ||= get_latest_valuation[:date]
     end
 
     def valuation_difference
@@ -60,23 +47,11 @@
 
     private
 
-    def calculate_and_memoize_earliest_valuation
-      date = if @start_date.nil? || @start_date.to_date == 1.day.ago.to_date
-               1.day.ago
-             else
-               @start_date + 1.day
-             end
-
-      valuation = @hood.valuation_before(date)
-
-      @earliest_valuation_date = valuation[:date]
-      @earliest_valuation = valuation[:valuation]
+    def get_earliest_valuation
+      @get_earliest_valuation ||= @hood.valuation_on_or_before(@start_date)
     end
 
-    def calculate_and_memoize_latest_valuation
-      valuation = @hood.valuation_before(@end_date + 1.day)
-
-      @latest_valuation_date = valuation[:date]
-      @latest_valuation = valuation[:valuation]
+    def get_latest_valuation
+      @get_latest_valuation ||= @hood.valuation_on_or_before(@end_date)
     end
   end
