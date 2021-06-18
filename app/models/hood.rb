@@ -2,16 +2,21 @@ class Hood < ApplicationRecord
   has_many :houses
   has_many :home_owners_associations
 
+  def valuation_on_or_before(date)
+    valuation_before(date + 1.day)
+  end
+
   def valuation_before(date)
     house_count = houses.count
+    normalized_date = date.to_date
 
     # keep track of dates, and how many houses had a price at that point in time
     # default number of houses to 0
     dates_with_valuations = houses.flat_map {|house| house.price_history.keys }
 
     # array to hash
-    date_to_house_counts = dates_with_valuations.each_with_object(Hash.new(0)) do |date, date_to_occurances|
-      date_to_occurances[date] += 1
+    date_to_house_counts = dates_with_valuations.each_with_object(Hash.new(0)) do |date_with_valuation, date_to_occurances|
+      date_to_occurances[date_with_valuation] += 1
     end
 
     # find the dates where all houses had pricing
@@ -23,7 +28,7 @@ class Hood < ApplicationRecord
     latest_date_with_pricing = date_where_all_houses_have_pricing.keys.map do |pricing_date|
       price_date = Date.strptime(pricing_date)
 
-      if price_date < date
+      if price_date < normalized_date
         price_date
       end
     end.compact.max

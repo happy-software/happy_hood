@@ -40,3 +40,7 @@ task :collect_zpids => :environment do
   puts "Missing ZPIDs for #{missing_zpids.reload.where(zpid: nil).count}"
 end
 
+desc "Send monthly summary to Slack"
+task monthly_price_summary: :environment do
+  HappyHood::Slack::Client.send_monthly_price_summary
+end
