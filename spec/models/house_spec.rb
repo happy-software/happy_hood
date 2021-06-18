@@ -13,6 +13,22 @@ describe House do
   end
 
   describe "#add_valuation" do
+    it "is chainable" do
+      date = 1.day.ago
+
+      house = House.new
+      house.add_valuation(date, 20)
+      house.add_valuation(date, 10)
+      house.add_valuation(date, 42)
+
+      house2 = House.new
+        .add_valuation(date, 20)
+        .add_valuation(date, 10)
+        .add_valuation(date, 42)
+
+      expect(house.price_history).to eq(house2.price_history)
+    end
+
     context "when there hasn't been a valuation" do
       it "creates a valuation" do
         house = House.new
@@ -27,9 +43,9 @@ describe House do
         date = Date.today
 
         house = House.new
-        house.add_valuation(date, 20)
-        house.add_valuation(date, 10)
-        house.add_valuation(date, 42)
+          .add_valuation(date, 20)
+          .add_valuation(date, 10)
+          .add_valuation(date, 42)
 
         expect(house.valuation_on(date)).to eq(42)
       end
