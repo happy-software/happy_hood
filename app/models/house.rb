@@ -3,9 +3,11 @@ class House < ApplicationRecord
   has_many :home_owners_associations, through: :hood
   has_one :house_metadatum, dependent: :destroy
 
-  PRICE_HISTORY_DATE_FORMAT = "%Y-%m-%d".freeze
+  delegate :zpid, to: :house_metadatum, allow_nil: true
 
   after_initialize :set_price_history
+
+  PRICE_HISTORY_DATE_FORMAT = "%Y-%m-%d".freeze
 
   def valuation_on(date)
     normalized_date = date.strftime(PRICE_HISTORY_DATE_FORMAT)
