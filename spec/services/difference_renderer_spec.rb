@@ -1,21 +1,12 @@
 require "rails_helper"
 
 describe DifferenceRenderer do
-  def string_date(date)
-    date.strftime(House::PRICE_HISTORY_DATE_FORMAT)
-  end
-
   describe "#render" do
     context "when a neighborhood does not have houses that were valuated on the same day" do
       it "posts a message saying no updates" do
         hood = Hood.create(name: "Schitt's Creek")
-        hood.houses.create(price_history: {
-          string_date(1.day.ago) => 25,
-        })
-
-        hood.houses.create(price_history: {
-          string_date(2.day.ago) => 26
-        })
+        hood.houses.new.add_valuation(1.day.ago, 25).save!
+        hood.houses.new.add_valuation(2.day.ago, 26).save!
 
         difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
         rendered_diff = described_class.summarize_differences([difference])
@@ -30,15 +21,15 @@ describe DifferenceRenderer do
 
       context "one of the neighborhoods does not have a different valuation" do
         it "does not include that neighborhood in the message" do
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 25
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 25)
+            .save!
 
-          hood2.houses.create(price_history: {
-            string_date(1.day.ago) => 0,
-            string_date(Date.today) => 25
-          })
+          hood2.houses.new
+            .add_valuation(1.day.ago, 0)
+            .add_valuation(Date.today, 25)
+            .save!
 
           differences = [
             HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today),
@@ -54,10 +45,10 @@ describe DifferenceRenderer do
 
       context "when there is only one house" do
         it "does not show an average per house" do
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 24,
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 24)
+            .save!
 
           difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
           rendered_diff = described_class.summarize_differences([difference])
@@ -70,14 +61,15 @@ describe DifferenceRenderer do
         it "posts a message with the delta" do
           # The case when we stopped updating house prices for some reason
           # like running out of dynos
-          hood.houses.create(price_history: {
-            string_date(12.days.ago) => 20,
-            string_date(Date.today) => 24,
-          })
-          hood.houses.create(price_history: {
-            string_date(12.days.ago) => 20,
-            string_date(Date.today) => 24,
-          })
+          hood.houses.new
+            .add_valuation(12.days.ago, 20)
+            .add_valuation(Date.today, 24)
+            .save!
+
+          hood.houses.new
+            .add_valuation(12.days.ago, 20)
+            .add_valuation(Date.today, 24)
+            .save!
 
           difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
           rendered_diff = described_class.summarize_differences([difference])
@@ -95,15 +87,15 @@ describe DifferenceRenderer do
 
       context "a neighborhood that has dropped in valuation" do
         it "shows a negative sign to indicate a drop in price" do
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 25,
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 25)
+            .save!
 
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 20
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 20)
+            .save!
 
           difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
           rendered_diff = described_class.summarize_differences([difference])
@@ -120,15 +112,15 @@ describe DifferenceRenderer do
 
       context "a neighborhood that has gone up in valuation" do
         it "shows a positive sign to indicate an increase in price per house" do
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 25,
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 25)
+            .save!
 
-          hood.houses.create(price_history: {
-            string_date(1.day.ago) => 25,
-            string_date(Date.today) => 420
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 25)
+            .add_valuation(Date.today, 420)
+            .save!
 
           difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
           rendered_diff = described_class.summarize_differences([difference])

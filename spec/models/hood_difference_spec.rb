@@ -21,14 +21,15 @@ describe HoodDifference do
       context "when each house was valuated on the earliest valuation date" do
         it "has correct difference values" do
           hood = Hood.create(name: "Schitt's Creek")
-          hood.houses.create(price_history: {
-            1.day.ago.strftime("%Y-%m-%d") => 300_000,
-            Date.today.strftime("%Y-%m-%d") => 310_000,
-          })
-          hood.houses.create(price_history: {
-            1.day.ago.strftime("%Y-%m-%d") => 280_000,
-            Date.today.strftime("%Y-%m-%d") => 287_000,
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 300_000)
+            .add_valuation(Date.today, 310_000)
+            .save!
+
+          hood.houses.new
+            .add_valuation(1.day.ago, 280_000)
+            .add_valuation(Date.today, 287_000)
+            .save!
 
           instance = described_class.new(hood, start_date: 1.day.ago, end_date: Date.today)
 
@@ -48,15 +49,15 @@ describe HoodDifference do
       context "when all the houses have been valuated, but one was not valuated on the specified earliest valuation date" do
         it "looks back to an earlier date with correct difference values based" do
           hood = Hood.create(name: "Schitt's Creek")
-          hood.houses.create(price_history: {
-            2.days.ago.strftime("%Y-%m-%d") => 300_000,
-            Date.today.strftime("%Y-%m-%d") => 310_000,
-          })
-          hood.houses.create(price_history: {
-            2.days.ago.strftime("%Y-%m-%d") => 279_000,
-            1.day.ago.strftime("%Y-%m-%d") => 280_000,
-            Date.today.strftime("%Y-%m-%d") => 287_000,
-          })
+          hood.houses.new
+            .add_valuation(2.days.ago, 300_000)
+            .add_valuation(Date.today, 310_000)
+            .save!
+          hood.houses.new
+            .add_valuation(2.days.ago, 279_000)
+            .add_valuation(1.day.ago, 280_000)
+            .add_valuation(Date.today, 287_000)
+            .save!
 
           instance = described_class.new(hood, start_date: 1.day.ago, end_date: Date.today)
 
@@ -76,10 +77,10 @@ describe HoodDifference do
       context "when there is only one house" do
         it "has correct difference values" do
           hood = Hood.create(name: "Schitt's Creek")
-          hood.houses.create(price_history: {
-            1.day.ago.strftime("%Y-%m-%d") => 300_000,
-            Date.today.strftime("%Y-%m-%d") => 310_000,
-          })
+          hood.houses.new
+            .add_valuation(1.day.ago, 300_000)
+            .add_valuation(Date.today, 310_000)
+            .save!
 
           instance = described_class.new(hood, start_date: 1.day.ago, end_date: Date.today)
 
