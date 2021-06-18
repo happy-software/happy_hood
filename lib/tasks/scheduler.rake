@@ -3,7 +3,7 @@ require 'happy_hood/slack/client'
 desc 'Collect Zillow Zestimate for each House'
 task :house_valuation_collector => :environment do
   House.find_each do |house|
-    next unless zpid = house&.house_metadatum&.zpid
+    next unless zpid = house.zpid
 
     property = Rubillow::HomeValuation.zestimate({ :zpid => zpid })
 
