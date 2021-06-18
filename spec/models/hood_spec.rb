@@ -12,8 +12,8 @@ describe Hood do
       context "when the houses were valuated yesterday" do
         it "returns the sum of yesterdays valuation" do
           hood = Hood.create
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 30, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 20, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
+          hood.houses.new.add_valuation(1.day.ago, 30).add_valuation(3.days.ago, 5).save!
+          hood.houses.new.add_valuation(1.day.ago, 20).add_valuation(3.days.ago, 5).save!
 
           expect(hood.valuation_before(Date.today)).to eq({
             date: 1.day.ago.to_date,
@@ -25,8 +25,8 @@ describe Hood do
       context "when only some of the houses were valuated yesterday" do
         it "returns the sum of the valuation on the date they were all valuated" do
           hood = Hood.create
-          hood.houses.create(price_history: { 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 20, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
+          hood.houses.new.add_valuation(3.days.ago, 5).save!
+          hood.houses.new.add_valuation(1.day.ago, 20).add_valuation(3.days.ago, 5).save!
 
           expect(hood.valuation_before(Date.today)).to eq({
             date: 3.days.ago.to_date,
@@ -48,8 +48,15 @@ describe Hood do
       context "when the houses were valuated yesterday" do
         it "returns the sum of yesterdays valuation" do
           hood = Hood.create
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 30, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 20, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
+          hood.houses.new
+            .add_valuation(1.day.ago, 30)
+            .add_valuation(3.days.ago, 5)
+            .save!
+
+          hood.houses.new
+            .add_valuation(1.day.ago, 20)
+            .add_valuation(3.days.ago, 5)
+            .save!
 
           expect(hood.valuation_on_or_before(1.day.ago)).to eq({
             date: 1.day.ago.to_date,
@@ -61,8 +68,13 @@ describe Hood do
       context "when only some of the houses were valuated yesterday" do
         it "returns the sum of the valuation on the date they were all valuated" do
           hood = Hood.create
-          hood.houses.create(price_history: { 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
-          hood.houses.create(price_history: { 1.day.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 20, 3.days.ago.strftime(House::PRICE_HISTORY_DATE_FORMAT) => 5 })
+          hood.houses.new
+            .add_valuation(3.days.ago, 5)
+            .save!
+          hood.houses.new
+            .add_valuation(1.day.ago, 20)
+            .add_valuation(3.days.ago, 5)
+            .save!
 
           expect(hood.valuation_on_or_before(1.day.ago)).to eq({
             date: 3.days.ago.to_date,
