@@ -3,16 +3,12 @@ require 'happy_hood/slack/client'
 desc 'Collect Zillow Zestimate for each House'
 task :house_valuation_collector => :environment do
   House.find_each do |house|
-    next unless zpid = house.zpid
-
-    property = Rubillow::HomeValuation.zestimate({ :zpid => zpid })
-
-    if property.success?
-      price_history = house.price_history || {}
-      normalized_valuation_date = Date.current.strftime("%Y-%m-%d")
-      price_history[normalized_valuation_date] ||= property.price.to_f
-      house.price_history = price_history
-      house.save!
+    begin
+      ValuationCollector.new(house).perform
+    rescue ValuationCollectorError => e
+      # report but do not stop from doing this for other properties
+      # TODO implement Sentry alerting
+      Rails.logger.error e
     end
   end
 
