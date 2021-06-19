@@ -1,6 +1,56 @@
 require "rails_helper"
 
 describe House do
+  describe "attributes" do
+    describe "address related fields" do
+      it "has all the proper fields" do
+
+        house = House.new(address: {
+          street_address: "123 fake st",
+          city: "Chicago",
+          state: "IL",
+          zip_code: "60601"
+        })
+
+        expect(house).to have_attributes(
+          street_address: "123 fake st",
+          city: "Chicago",
+          state: "IL",
+          zip_code: "60601"
+        )
+      end
+    end
+
+    describe "#zpid" do
+      context "when no house_metadatum is available" do
+        it "is nil" do
+          house = House.new
+          expect(house.zpid).to be_nil
+        end
+      end
+
+      context "when a house_metadatum is available" do
+        context "if the metadatum does not have a zpid" do
+          it "is nil" do
+            house = House.new
+            house.house_metadatum = HouseMetadatum.new
+
+            expect(house.zpid).to be_nil
+          end
+        end
+
+        context "if the house metadatum has a zpid" do
+          it "is the same as the house metadatum zpid" do
+            house = House.new
+            house.house_metadatum = HouseMetadatum.new(zpid: "1")
+
+            expect(house.zpid).to eq("1")
+          end
+        end
+      end
+    end
+  end
+
   describe "#valuation_on" do
     it "correctly returns a proper valuation" do
       date = Date.today
@@ -48,35 +98,6 @@ describe House do
           .add_valuation(date, 42)
 
         expect(house.valuation_on(date)).to eq(42)
-      end
-    end
-  end
-
-  describe "#zpid" do
-    context "when no house_metadatum is available" do
-      it "is nil" do
-        house = House.new
-        expect(house.zpid).to be_nil
-      end
-    end
-
-    context "when a house_metadatum is available" do
-      context "if the metadatum does not have a zpid" do
-        it "is nil" do
-          house = House.new
-          house.house_metadatum = HouseMetadatum.new
-
-          expect(house.zpid).to be_nil
-        end
-      end
-
-      context "if the house metadatum has a zpid" do
-        it "is the same as the house metadatum zpid" do
-          house = House.new
-          house.house_metadatum = HouseMetadatum.new(zpid: "1")
-
-          expect(house.zpid).to eq("1")
-        end
       end
     end
   end
