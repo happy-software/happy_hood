@@ -7,7 +7,6 @@ task :house_valuation_collector => :environment do
       ValuationCollector.new(house).perform
     rescue ValuationCollectorError => e
       # report but do not stop from doing this for other properties
-      # TODO implement Sentry alerting
       Rails.logger.error e
       Sentry.capture_exception(e, extra: { house_id: house.id })
     end
