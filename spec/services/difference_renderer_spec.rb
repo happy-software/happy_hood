@@ -77,7 +77,7 @@ describe DifferenceRenderer do
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
-              "#{12.days.ago.strftime("%b %d, %Y")}: $40.00 (12 days ago)",
+              "#{12.days.ago.strftime("%b %d, %Y")}: $40.00",
               "Difference:   $8.00",
               "(+$4.00 avg/house)",
             )
