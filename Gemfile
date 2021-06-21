@@ -58,3 +58,4 @@ gem 'pry-rails'
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'rubillow' # Zillow API Wrapper
 gem 'slack-ruby-client'
+gem 'sentry-ruby'
