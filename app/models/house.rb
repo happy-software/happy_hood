@@ -21,6 +21,22 @@ class House < ApplicationRecord
     self
   end
 
+  def street_address
+    address["street_address"]
+  end
+
+  def city
+    address["city"]
+  end
+
+  def state
+    address["state"]
+  end
+
+  def zip_code
+    address["zip_code"]
+  end
+
   private
 
   def set_price_history
