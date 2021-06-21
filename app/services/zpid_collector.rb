@@ -9,6 +9,7 @@ class ZpidCollector
         updated_count += 1
       rescue ZpidCollectorError => e
         Rails.logger.error e
+        Sentry.capture_exception(e, extra: { house_id: house.id })
       ensure
         total_houses += 1
       end
