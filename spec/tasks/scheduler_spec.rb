@@ -1,8 +1,6 @@
 require "rails_helper"
 require "rake"
 
-Rails.application.load_tasks
-
 describe "scheduler.rake rake tasks" do
   let(:task) { Rake::Task[task_name] }
   let(:task_name) { "my:rake:task" }
