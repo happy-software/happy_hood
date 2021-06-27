@@ -60,7 +60,7 @@ Rails.application.configure do
   # config.cache_store = :mem_cache_store
   config.cache_store = :redis_cache_store, {
     url: ENV["REDIS_URL"],
-    error_handler: -> (method: , returning: exception:) {
+    error_handler: -> (method: , returning:, exception:) {
       Sentry.capture_exception(exception, level: "warning", tags: { method: method, returning: returning })
     }
   }
