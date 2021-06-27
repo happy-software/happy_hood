@@ -20,15 +20,24 @@ describe "scheduler.rake rake tasks" do
       task.invoke
     end
 
-    it "sends the monthly price summary only once per month" do
-      months = [3.months.ago, 1.month.ago]
+    context "with caching enabled" do
+      before do
+        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, "tmp/test#{ENV["TEST_ENV_NUMBER"]}/cache")
+        allow(Rails).to receive(:cache).and_return(file_store_cache)
+        Rails.cache.clear
+      end
+      it "sends the monthly price summary only once per month" do
+        months = [3.months.ago, 1.month.ago]
 
-      months.each do |month|
-        Timecop.freeze(month) do
-          expect(HappyHood::Slack::Client).to receive(:send_monthly_price_summary).exactly(1).time
+        months.each do |month|
+          Timecop.freeze(month) do
+            expect(HappyHood::Slack::Client).to receive(:send_monthly_price_summary).exactly(1).time
 
-          task.invoke
-          task.reenable
+            2.times do
+              task.invoke
+              task.reenable
+            end
+          end
         end
       end
     end
