@@ -1,9 +1,6 @@
 require "rails_helper"
 require "rake"
 
-# Load all rake tasks once, available for re-use in each example
-Rails.application.load_tasks
-
 describe "neighborhood.rake rake tasks" do
   let(:task) { Rake::Task[task_name] }
   let(:task_name) { "my:rake:task" }
