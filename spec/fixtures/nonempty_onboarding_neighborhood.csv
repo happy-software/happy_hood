@@ -1,4 +1,4 @@
-neighborhood_name,neighborhood_zip_code,house_street_address,house_city,house_state,house_zip_code,house_bedrooms,house_bathrooms,house_square_feet
+hood_name,hood_zip_code,house_street_address,house_city,house_state,house_zip_code,house_bedrooms,house_bathrooms,house_square_feet
 Schitt's Creek,13459,8106 Muddy Pines Pl,Tampa,FL,33635,3,2.5,1872
 Schitt's Creek,13459,8108 Muddy Pines Pl,Tampa,FL,33635,3,2.5,1816
 Schitt's Creek,13459,8110 Muddy Pines Pl,Tampa,FL,33635,3,2.5,1584
