@@ -22,7 +22,7 @@ describe "neighborhood.rake rake tasks" do
 
         task.invoke
 
-        expect(File.read(tmp_file.path).strip).to eq(NeighborhoodCsvHeaders.join(","))
+        expect(File.read(tmp_file.path).strip).to eq(Hood::Onboarder::RequiredHeaders.join(","))
       end
     end
   end
@@ -41,47 +41,14 @@ describe "neighborhood.rake rake tasks" do
       end
     end
 
-    context "without neighborhood data" do
-      it "creates the neighborhood without houses" do
-        csv_file_path = Rails.root.join("spec", "fixtures", "empty_onboarding_neighborhood.csv")
+    it "invokes the onboarder and creates houses" do
+      csv_file_path = Rails.root.join("spec", "fixtures", "nonempty_onboarding_neighborhood.csv")
 
-        csv_entries = CSV.read(csv_file_path, headers: true).map(&:to_h)
-        neighborhood_names = csv_entries.map { |entry| entry["neighborhood_name"] }.uniq
+      expect(Hood::Onboarder).to receive(:run).and_call_original
 
-        expect(Hood.where(name: neighborhood_names)).to be_empty
-        expect(House.count).to eq(0)
-
-        task.invoke(csv_file_path)
-
-        hoods = Hood.where(name: neighborhood_names)
-        expect(hoods.size).to eq(1)
-        expect(hoods.first.houses.count).to eq(0)
-      end
-    end
-
-    context "with neighborhood data" do
-      it "creates each house provided" do
-        csv_file_path = Rails.root.join("spec", "fixtures", "nonempty_onboarding_neighborhood.csv")
-
-        csv_entries = CSV.read(csv_file_path, headers: true).map(&:to_h)
-        neighborhood_names = csv_entries.map { |entry| entry["neighborhood_name"] }.uniq
-
-        expect(Hood.where(name: neighborhood_names)).to be_empty
-        expect(House.count).to eq(0)
-
-        task.invoke(csv_file_path)
-
-        hoods = Hood.where(name: neighborhood_names)
-        expect(hoods.size).to eq(1)
-
-        hood = hoods.first
-        expect(hood.houses.count).to eq(3)
-        expect(hood.houses.map(&:address)).to include(
-          hash_including("city" => "Tampa", "state" => "FL", "street_address" => "8106 Muddy Pines Pl", "zip_code" => "33635"),
-          hash_including("city" => "Tampa", "state" => "FL", "street_address" => "8108 Muddy Pines Pl", "zip_code" => "33635"),
-          hash_including("city" => "Tampa", "state" => "FL", "street_address" => "8110 Muddy Pines Pl", "zip_code" => "33635"),
-        )
-      end
+      expect { task.invoke(csv_file_path) }
+        .to change { Hood.count }.from(0).to(1)
+        .and change { House.count }.from(0).to(3)
     end
   end
 end
