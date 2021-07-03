@@ -22,7 +22,7 @@ describe "neighborhood.rake rake tasks" do
 
         task.invoke
 
-        expect(File.read(tmp_file.path).strip).to eq(Hood::Onboarder::RequiredHeaders.join(","))
+        expect(File.read(tmp_file.path).strip).to eq(Hood::Onboarder::RequiredFields.join(","))
       end
     end
   end

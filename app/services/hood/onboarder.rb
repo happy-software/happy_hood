@@ -1,6 +1,6 @@
 class Hood
   class Onboarder
-    RequiredHeaders = %i(
+    RequiredFields = %i(
       hood_name
       hood_zip_code
       house_street_address
@@ -12,22 +12,22 @@ class Hood
       house_square_feet
     ).freeze
 
-    def self.run(csv_entries)
-      csv_entries.each do |entry|
+    def self.run(entries)
+      entries.each do |entry|
         new(entry).perform
       end
     end
 
-    def initialize(csv_entry)
-      @neighborhood_name = csv_entry[:hood_name]&.strip
-      @neighborhood_zip_code = csv_entry[:hood_zip_code]&.strip
-      @house_street_address = csv_entry[:house_street_address]&.strip
-      @house_city = csv_entry[:house_city]&.strip
-      @house_state = csv_entry[:house_state]&.strip
-      @house_zip_code = csv_entry[:house_zip_code]&.strip
-      @house_bedrooms = csv_entry[:house_bedrooms]&.strip
-      @house_bathrooms = csv_entry[:house_bathrooms]&.strip
-      @house_square_feet = csv_entry[:house_square_feet]&.strip
+    def initialize(entry)
+      @neighborhood_name = entry[:hood_name]&.strip
+      @neighborhood_zip_code = entry[:hood_zip_code]&.strip
+      @house_street_address = entry[:house_street_address]&.strip
+      @house_city = entry[:house_city]&.strip
+      @house_state = entry[:house_state]&.strip
+      @house_zip_code = entry[:house_zip_code]&.strip
+      @house_bedrooms = entry[:house_bedrooms]&.strip
+      @house_bathrooms = entry[:house_bathrooms]&.strip
+      @house_square_feet = entry[:house_square_feet]&.strip
     end
 
     def perform
