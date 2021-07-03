@@ -3,4 +3,6 @@ Rails.application.routes.draw do
   root 'pages#home'
   get  '/house_valuations/:zpid', to: 'houses#valuations'
   post '/house_valuations/:zpid', to: 'houses#import'
+
+  post '/onboard', controller: 'onboarding', action: 'hood_and_houses'
 end
