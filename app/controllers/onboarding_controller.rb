@@ -1,4 +1,5 @@
 class OnboardingController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :authenticate
 
   def hood_and_houses
