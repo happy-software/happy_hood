@@ -4,7 +4,7 @@ namespace :neighborhood do
     require "csv"
 
     filename = "#{DateTime.now.to_i}_onboard_neighborhood.csv"
-    CSV.open(filename, "w") { |csv| csv << Hood::Onboarder::RequiredHeaders }
+    CSV.open(filename, "w") { |csv| csv << Hood::Onboarder::RequiredFields }
 
     Rails.logger.info "Created #{filename}"
   end
@@ -19,11 +19,11 @@ namespace :neighborhood do
       header_converters: :symbol,
     ).map(&:to_h)
 
-    if csv_entries.flat_map(&:keys).uniq != Hood::Onboarder::RequiredHeaders
+    if csv_entries.flat_map(&:keys).uniq != Hood::Onboarder::RequiredFields
       error = <<~ERR
       #{args[:hood_onboarding_csv_path]} does not have valid headers.
       Got: #{csv_entries.flat_map(&:keys).uniq}
-      Want: #{Hood::Onboarder::RequiredHeaders}
+      Want: #{Hood::Onboarder::RequiredFields}
       ERR
 
       raise ArgumentError, error
