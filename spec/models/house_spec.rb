@@ -115,6 +115,8 @@ describe House do
         expect(House.with_city("Tampa").first).to have_attributes(city: "Tampa")
         expect(House.with_state("FL").first).to have_attributes(state: "FL")
         expect(House.with_zip_code("33635").first).to have_attributes(zip_code: "33635")
+        expect(House.with_address_attr(zip_code: "33635").first).to have_attributes(zip_code: "33635")
+        expect(House.with_address_attr(city: "Chicago", zip_code: "33635")).to be_empty
       end
     end
   end
