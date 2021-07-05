@@ -101,4 +101,23 @@ describe House do
       end
     end
   end
+
+  describe "scopes" do
+    describe "json scopes" do
+      it "returns the correct houses" do
+        House.new(address: { city: "Tampa", state: "FL", zip_code: "33635", street_address: "8110 Muddy Pines Pl" }).save(validate: false)
+
+        results = House.with_street_address("8110 Muddy Pines Pl")
+        expect(results).to be_a(ActiveRecord::Relation)
+        expect(results.size).to eq(1)
+
+        expect(results.first).to have_attributes(street_address: "8110 Muddy Pines Pl")
+        expect(House.with_city("Tampa").first).to have_attributes(city: "Tampa")
+        expect(House.with_state("FL").first).to have_attributes(state: "FL")
+        expect(House.with_zip_code("33635").first).to have_attributes(zip_code: "33635")
+        expect(House.with_address_attr(zip_code: "33635").first).to have_attributes(zip_code: "33635")
+        expect(House.with_address_attr(city: "Chicago", zip_code: "33635")).to be_empty
+      end
+    end
+  end
 end
