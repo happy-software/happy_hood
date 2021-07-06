@@ -1,0 +1,9 @@
+<%= hood_name %> (<%= house_count %> Happy <%= house_or_houses %>)
+
+<% if earliest_valuation_date %>
+<%= earliest_valuation_date %>: <%= earliest_valuation %> <%= time_ago_since_earliest_valuation %>
+<% end %>
+
+<%= latest_valuation_date %>: <%= latest_valuation %>
+
+Difference:   <%= difference_in_currency %> <%= average_house_difference %>
