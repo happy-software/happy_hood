@@ -35,7 +35,8 @@ describe HappyHood::Slack::Client do
                                           latest_valuation_date: Date.today,
                                           house_count: 1,
                                           valuation_difference: 5.00,
-                                          average_house_difference: nil
+                                          average_house_difference: nil,
+                                          average_house_price: 10.00,
                                          )
         mock_calculator = instance_double(DifferenceCalculator, differences: [mock_difference])
         allow(DifferenceCalculator).to receive(:new).and_return(mock_calculator)
@@ -87,6 +88,7 @@ describe HappyHood::Slack::Client do
                                           latest_valuation_date: Date.today,
                                           house_count: 1,
                                           valuation_difference: 5.00,
+                                          average_house_price: 10.00,
                                           average_house_difference: nil
                                          )
         mock_calculator = instance_double(DifferenceCalculator, differences: [mock_difference])

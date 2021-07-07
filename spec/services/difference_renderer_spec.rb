@@ -74,9 +74,10 @@ describe DifferenceRenderer do
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
-              "#{Date.today.strftime("%b %d, %Y")}: $48.00",
-              "Difference:   $48.00",
+              "#{Date.today.strftime("%b %d, %Y")}:    $48.00",
+              "Difference:      $48.00",
               "(+$24.00 avg/house)",
+              "Avg House Price: $24.00",
             )
           )
         end
@@ -102,9 +103,10 @@ describe DifferenceRenderer do
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
-              "#{12.days.ago.strftime("%b %d, %Y")}: $40.00",
-              "Difference:   $8.00",
-              "(+$4.00 avg/house)",
+              "#{12.days.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $40.00",
+              "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $48.00",
+              "Difference:      $8.00",
+              "Avg House Price: $24.00 (+$4.00 avg/house)",
             )
           )
         end
@@ -128,8 +130,8 @@ describe DifferenceRenderer do
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
-              "Difference:   -$5.00",
-              "(-$2.50 avg/house)"
+              "Difference:      -$5.00",
+              "Avg House Price: $22.50 (-$2.50 avg/house)"
             )
           )
         end
@@ -154,8 +156,8 @@ describe DifferenceRenderer do
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
-              "Difference:   $395.00",
-              "(+$197.50 avg/house)"
+              "Difference:      $395.00",
+              "Avg House Price: $222.50 (+$197.50 avg/house)"
             )
           )
         end

@@ -33,6 +33,7 @@ class DifferenceRenderer
       hood_name: @difference.hood_name,
       house_count: @difference.house_count,
       house_or_houses: "House".pluralize(@difference.house_count),
+      average_house_price: number_to_currency(@difference.average_house_price),
       latest_valuation_date: short_date_format(@difference.latest_valuation_date),
       latest_valuation: number_to_currency(@difference.latest_valuation),
       difference_in_currency: number_to_currency(@difference.valuation_difference),
