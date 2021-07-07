@@ -57,6 +57,31 @@ describe DifferenceRenderer do
         end
       end
 
+      context "when a neighborhood that was just added has houses partially valuated" do
+        it "posts a message without yesterday included" do
+          hood.houses.new
+            .add_valuation(Date.today, 24)
+            .save!
+
+          hood.houses.new
+            .add_valuation(12.days.ago, 20)
+            .add_valuation(Date.today, 24)
+            .save!
+
+          difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
+          rendered_diff = described_class.summarize_differences([difference])
+
+          expect(rendered_diff).to match(
+            a_string_including(
+              hood.name,
+              "#{Date.today.strftime("%b %d, %Y")}: $48.00",
+              "Difference:   $48.00",
+              "(+$24.00 avg/house)",
+            )
+          )
+        end
+      end
+
       context "when a neighborhood has houses that were valuated prior to yesterday and valuated today" do
         it "posts a message with the delta" do
           # The case when we stopped updating house prices for some reason
