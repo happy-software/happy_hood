@@ -46,9 +46,9 @@ describe HappyHood::Slack::Client do
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
           text: a_string_including(
             "Schitt's Creek",
-            "#{1.day.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $5.00",
-            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $10.00",
-            "Difference:   $5.00",
+            "#{1.day.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $5.00",
+            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $10.00",
+            "Difference:      $5.00",
           )
         ))
       end
@@ -99,9 +99,9 @@ describe HappyHood::Slack::Client do
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
           text: a_string_including(
             "Schitt's Creek",
-            "#{1.month.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $5.00",
-            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $10.00",
-            "Difference:   $5.00",
+            "#{1.month.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $5.00",
+            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $10.00",
+            "Difference:      $5.00",
           )
         ))
       end
