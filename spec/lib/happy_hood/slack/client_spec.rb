@@ -35,7 +35,8 @@ describe HappyHood::Slack::Client do
                                           latest_valuation_date: Date.today,
                                           house_count: 1,
                                           valuation_difference: 5.00,
-                                          average_house_difference: nil
+                                          average_house_difference: nil,
+                                          average_house_price: 10.00,
                                          )
         mock_calculator = instance_double(DifferenceCalculator, differences: [mock_difference])
         allow(DifferenceCalculator).to receive(:new).and_return(mock_calculator)
@@ -45,9 +46,9 @@ describe HappyHood::Slack::Client do
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
           text: a_string_including(
             "Schitt's Creek",
-            "#{1.day.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $5.00",
-            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $10.00",
-            "Difference:   $5.00",
+            "#{1.day.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $5.00",
+            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $10.00",
+            "Difference:      $5.00",
           )
         ))
       end
@@ -87,6 +88,7 @@ describe HappyHood::Slack::Client do
                                           latest_valuation_date: Date.today,
                                           house_count: 1,
                                           valuation_difference: 5.00,
+                                          average_house_price: 10.00,
                                           average_house_difference: nil
                                          )
         mock_calculator = instance_double(DifferenceCalculator, differences: [mock_difference])
@@ -97,9 +99,9 @@ describe HappyHood::Slack::Client do
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
           text: a_string_including(
             "Schitt's Creek",
-            "#{1.month.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $5.00",
-            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}: $10.00",
-            "Difference:   $5.00",
+            "#{1.month.ago.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $5.00",
+            "#{Date.today.strftime(DifferenceRenderer::SHORT_DATE_FORMAT)}:    $10.00",
+            "Difference:      $5.00",
           )
         ))
       end

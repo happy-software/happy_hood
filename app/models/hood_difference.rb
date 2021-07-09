@@ -45,6 +45,10 @@
       valuation_difference / house_count if house_count > 1
     end
 
+    def average_house_price
+      latest_valuation / house_count
+    end
+
     private
 
     def get_earliest_valuation
