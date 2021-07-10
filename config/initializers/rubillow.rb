@@ -1,3 +1,3 @@
 Rubillow.configure do |configuration|
-  configuration.zwsid = ENV['ZILLOW_API_KEY']
+  configuration.zwsid = Configuration::Zillow.api_key
 end
