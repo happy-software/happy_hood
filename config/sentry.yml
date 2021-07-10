@@ -1,0 +1,12 @@
+defaults: &defaults
+  environment: <%= Rails.env %>
+  dsn: <%= ENV["SENTRY_DSN"] %>
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

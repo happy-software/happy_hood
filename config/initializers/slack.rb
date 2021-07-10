@@ -1,3 +1,3 @@
 Slack.configure do |c|
-  c.token = ENV['SLACK_API_KEY']
+  c.token = Configuration::Slack.api_key
 end
