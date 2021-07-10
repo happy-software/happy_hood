@@ -1,5 +1,6 @@
 defaults: &defaults
-  api_key: <%= ENV["SLACK_API_KEY"] %>
+  environment: <%= Rails.env %>
+  dsn: <%= ENV["SENTRY_DSN"] %>
 
 development:
   <<: *defaults
