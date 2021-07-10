@@ -19,7 +19,9 @@ describe HappyHood::Slack::Client do
         described_class.send_daily_price_summary
 
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
-          text: "No changes for any HappyHood"
+          text: "No changes for any HappyHood",
+          icon_emoji: HappyHood::Slack::Client::DefaultIconEmoji,
+          channel: HappyHood::Slack::Client::DefaultSlackChannel,
         ))
       end
     end
@@ -33,6 +35,8 @@ describe HappyHood::Slack::Client do
 
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
           text: mocked_response,
+          icon_emoji: HappyHood::Slack::Client::DefaultIconEmoji,
+          channel: HappyHood::Slack::Client::DefaultSlackChannel,
         ))
       end
     end
@@ -55,7 +59,9 @@ describe HappyHood::Slack::Client do
         described_class.send_monthly_price_summary
 
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
-          text: "Could not calculate monthly difference"
+          text: "Could not calculate monthly difference",
+          icon_emoji: HappyHood::Slack::Client::DefaultIconEmoji,
+          channel: HappyHood::Slack::Client::DefaultSlackChannel,
         ))
       end
     end
@@ -68,7 +74,9 @@ describe HappyHood::Slack::Client do
         described_class.send_monthly_price_summary
 
         expect(mock_slack_client).to have_received(:chat_postMessage).with(a_hash_including(
-          text: mocked_response
+          text: mocked_response,
+          icon_emoji: HappyHood::Slack::Client::DefaultIconEmoji,
+          channel: HappyHood::Slack::Client::DefaultSlackChannel,
         ))
       end
     end
