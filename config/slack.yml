@@ -1,0 +1,11 @@
+default: &default
+  api_key: <%= ENV["SLACK_API_KEY"] %>
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
