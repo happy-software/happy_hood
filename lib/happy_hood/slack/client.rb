@@ -2,7 +2,7 @@ module HappyHood
   module Slack
     class Client
       DefaultSlackChannel = "#happy-hood".freeze
-      DefaultIconEmoji = ":house_buidings:".freeze
+      DefaultIconEmoji = ":house_buildings:".freeze
 
       def self.send_daily_price_summary
         message = daily_message
