@@ -2,6 +2,8 @@ require 'happy_hood/slack/client'
 
 desc 'Collect Zillow Zestimate for each House'
 task house_valuation_collector: :environment do
+  start_time = Time.now
+
   House.find_each do |house|
     begin
       ValuationCollector.new(house).perform
@@ -11,6 +13,8 @@ task house_valuation_collector: :environment do
       Sentry.capture_exception(e, extra: { house_id: house.id })
     end
   end
+
+  Rails.logger.info { "Completed getting valuation in #{Time.now - start_time } seconds" }
 end
 
 desc 'Ping Zillow to get property zpid'
