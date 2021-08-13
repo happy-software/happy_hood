@@ -11,8 +11,6 @@ task house_valuation_collector: :environment do
       Sentry.capture_exception(e, extra: { house_id: house.id })
     end
   end
-
-  HappyHood::Slack::Client.send_daily_price_summary
 end
 
 desc 'Ping Zillow to get property zpid'
@@ -22,6 +20,26 @@ task collect_zpids: :environment do
   result = ZpidCollector.fill_missing_zpids
 
   Rails.logger.info { "Updated #{result.updated_count} out of #{result.total_houses} without zpids." }
+end
+
+desc "Send daily summary to Slack"
+task daily_price_summary: :environment do
+  cache_key = "daily_summary/#{Date.today}"
+  sent_message = false
+
+  Rails.cache.fetch(cache_key, expires_in: 1.day) do
+    HappyHood::Slack::Client.send_daily_price_summary
+
+    sent_message = true
+  end
+
+  Rails.logger.info do
+    if sent_message
+      "Sent daily summary for cache key: #{cache_key}"
+    else
+      "Already sent daily summary. Skipping. Cache key: #{cache_key}"
+    end
+  end
 end
 
 desc "Send monthly summary to Slack"
