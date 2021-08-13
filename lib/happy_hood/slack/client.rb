@@ -4,11 +4,11 @@ module HappyHood
       DefaultSlackChannel = "#happy-hood".freeze
       DefaultIconEmoji = ":house_buildings:".freeze
 
-      def self.send_summary(start_date:, end_date:)
+      def self.send_summary(start_date:, end_date:, error_text: nil)
         message = build_message_for(start_date, end_date)
 
         if message.empty?
-          message = "Could not calculate difference for dates #{start_date} through #{end_date}"
+          message = error_text || "Could not calculate difference for dates #{start_date} through #{end_date}"
         end
 
         slack.chat_postMessage({
