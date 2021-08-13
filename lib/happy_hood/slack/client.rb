@@ -4,34 +4,6 @@ module HappyHood
       DefaultSlackChannel = "#happy-hood".freeze
       DefaultIconEmoji = ":house_buildings:".freeze
 
-      def self.send_daily_price_summary
-        message = build_message_for(1.day.ago, Date.today)
-
-        if message.empty?
-          message = "No changes for any HappyHood"
-        end
-
-        slack.chat_postMessage({
-          text: message,
-          icon_emoji: DefaultIconEmoji,
-          channel: DefaultSlackChannel,
-        })
-      end
-
-      def self.send_monthly_price_summary
-        message = build_message_for((Date.today.beginning_of_month - 1.month), Date.today)
-
-        if message.empty?
-          message = "Could not calculate monthly difference"
-        end
-
-        slack.chat_postMessage({
-          text: message,
-          icon_emoji: DefaultIconEmoji,
-          channel: DefaultSlackChannel,
-        })
-      end
-
       def self.send_summary(start_date:, end_date:)
         message = build_message_for(start_date, end_date)
 

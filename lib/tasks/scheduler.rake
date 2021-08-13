@@ -28,7 +28,7 @@ task daily_price_summary: :environment do
   sent_message = false
 
   Rails.cache.fetch(cache_key, expires_in: 1.day) do
-    HappyHood::Slack::Client.send_daily_price_summary
+    HappyHood::Slack::Client.send_summary(start_date: 1.day.ago, end_date: Date.today)
 
     sent_message = true
   end
@@ -48,7 +48,7 @@ task monthly_price_summary: :environment do
   sent_message = false
 
   Rails.cache.fetch(cache_key, expires_in: 1.month) do
-    HappyHood::Slack::Client.send_monthly_price_summary
+    HappyHood::Slack::Client.send_summary(start_date: Date.today.beginning_of_month, end_date: Date.today)
 
     sent_message = true
   end
