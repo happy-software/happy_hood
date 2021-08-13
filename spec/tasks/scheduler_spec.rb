@@ -13,7 +13,7 @@ describe "scheduler.rake rake tasks" do
     let(:task_name) { "monthly_price_summary" }
 
     it "sends a monthly price summary" do
-      expect(HappyHood::Slack::Client).to receive(:send_monthly_price_summary)
+      expect(HappyHood::Slack::Client).to receive(:send_summary)
 
       task.invoke
     end
@@ -29,7 +29,7 @@ describe "scheduler.rake rake tasks" do
 
         months.each do |month|
           Timecop.freeze(month) do
-            expect(HappyHood::Slack::Client).to receive(:send_monthly_price_summary).exactly(1).time
+            expect(HappyHood::Slack::Client).to receive(:send_summary).exactly(1).time
 
             2.times do
               task.invoke
@@ -45,7 +45,7 @@ describe "scheduler.rake rake tasks" do
     let(:task_name) { "daily_price_summary" }
 
     it "sends a monthly price summary" do
-      expect(HappyHood::Slack::Client).to receive(:send_daily_price_summary)
+      expect(HappyHood::Slack::Client).to receive(:send_summary)
 
       task.invoke
     end
@@ -61,7 +61,7 @@ describe "scheduler.rake rake tasks" do
 
         months.each do |month|
           Timecop.freeze(month) do
-            expect(HappyHood::Slack::Client).to receive(:send_daily_price_summary).exactly(1).time
+            expect(HappyHood::Slack::Client).to receive(:send_summary).exactly(1).time
 
             2.times do
               task.invoke
