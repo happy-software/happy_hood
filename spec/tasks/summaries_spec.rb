@@ -9,6 +9,33 @@ describe "summaries.rake rake tasks" do
     task.reenable
   end
 
+  describe "daily" do
+    let(:task_name) { "summaries:daily" }
+
+    it "sends a daily price summary" do
+      expect(HappyHood::Slack::Client).to receive(:send_daily_price_summary)
+
+      task.invoke
+    end
+
+    context "with caching enabled" do
+      before do
+        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, "tmp/test#{ENV["TEST_ENV_NUMBER"]}/cache")
+        allow(Rails).to receive(:cache).and_return(file_store_cache)
+        Rails.cache.clear
+      end
+
+      it "sends the daily price summary only once per day" do
+        expect(HappyHood::Slack::Client).to receive(:send_daily_price_summary).exactly(1).time
+
+        2.times do
+          task.invoke
+          task.reenable
+        end
+      end
+    end
+  end
+
   describe "monthly" do
     let(:task_name) { "summaries:monthly" }
 
