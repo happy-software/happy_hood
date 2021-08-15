@@ -11,8 +11,6 @@ task house_valuation_collector: :environment do
       Sentry.capture_exception(e, extra: { house_id: house.id })
     end
   end
-
-  HappyHood::Slack::Client.send_daily_price_summary
 end
 
 desc 'Ping Zillow to get property zpid'
