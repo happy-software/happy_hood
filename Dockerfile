@@ -17,3 +17,5 @@ RUN bundle install
 
 # Copy the current directory contents into the container at /app
 COPY . $APP_DIR
+
+EXPOSE 3001
