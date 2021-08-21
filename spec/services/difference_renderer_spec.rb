@@ -100,8 +100,6 @@ describe DifferenceRenderer do
           difference = HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today)
           rendered_diff = described_class.summarize_differences([difference])
 
-          puts rendered_diff
-
           expect(rendered_diff).to match(
             a_string_including(
               hood.name,
