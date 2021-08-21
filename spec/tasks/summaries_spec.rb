@@ -4,6 +4,7 @@ require "rake"
 describe "summaries.rake rake tasks" do
   let(:task) { Rake::Task[task_name] }
   let(:task_name) { "my:rake:task" }
+  let(:file_store_name) { "tmp/test_#{RSpec.current_example.metadata[:description].gsub(/\W+/, "_")[0..28]}/cache" }
 
   after(:each) do
     task.reenable
@@ -20,7 +21,7 @@ describe "summaries.rake rake tasks" do
 
     context "with caching enabled" do
       before do
-        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, "tmp/test#{ENV["TEST_ENV_NUMBER"]}/cache")
+        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, file_store_name)
         allow(Rails).to receive(:cache).and_return(file_store_cache)
         Rails.cache.clear
       end
@@ -47,7 +48,7 @@ describe "summaries.rake rake tasks" do
 
     context "with caching enabled" do
       before do
-        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, "tmp/test#{ENV["TEST_ENV_NUMBER"]}/cache")
+        file_store_cache = ActiveSupport::Cache.lookup_store(:file_store, file_store_name)
         allow(Rails).to receive(:cache).and_return(file_store_cache)
         Rails.cache.clear
       end
