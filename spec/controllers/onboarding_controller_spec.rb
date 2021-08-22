@@ -27,11 +27,9 @@ RSpec.describe OnboardingController, type: :request do
 
     context "when the user is authorized" do
       let(:mock_api_token) { "mock-token" }
-      let(:encrypted_mock_api_token) {
-        ActionController::HttpAuthentication::Token.encode_credentials(
-          mock_api_token
-        )
-      }
+      let(:encrypted_mock_api_token) do
+        ActionController::HttpAuthentication::Token.encode_credentials(mock_api_token)
+      end
 
       before do
         allow(ENV).to receive(:[]).and_call_original
