@@ -1,5 +1,5 @@
 class HousesController < ApplicationController
-  skip_before_action :verify_authenticity_token, :only => [:import]
+  skip_before_action :verify_authenticity_token
 
   def valuations
     return render json: {data: "Could not find a house with zpid: #{zpid}"}, status: 404 unless house_details
