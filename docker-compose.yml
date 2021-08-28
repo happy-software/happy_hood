@@ -1,5 +1,9 @@
 version: '3.4'
 
+networks:
+  happy_software:
+    name: happy_network
+
 x-main: &main
   tty: true
   stdin_open: true
@@ -14,6 +18,9 @@ x-main: &main
     DB_PASSWORD: postgres
     ONBOARDING_TOKEN: fake123
     HAPPY_HOUSE_API_TOKEN: fake123
+  networks:
+    - default
+    - happy_software
   depends_on:
     - postgres
     - redis
