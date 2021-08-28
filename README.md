@@ -24,6 +24,25 @@ Once the template is filled out, you can ingest it by running:
 bundle exec rails neighborhood:upload[path/to/csv]
 ```
 
+## API
+
+### Authorization
+
+Some of our endpoints use [token-based
+authorization](https://guides.rubyonrails.org/action_controller_overview.html#http-token-authentication). This means
+that you will need to specify the token for the endpoint via an HTTP header.
+
+E.g.
+
+```bash
+curl '$HAPPY_HOUSE/house_valuations/:house_id' -H 'Authorization: Bearer token="$ENDPOINT_TOKEN"'
+```
+
+If you want to test this out using `docker-compose`, you can do the following:
+
+- `docker-compose up` to spin up the application infrastructure
+- In a seperate pane/terminal session, `curl '127.0.0.1:3001/house_valuations/:house_id' -H 'Authorization: Bearer token="fake123"'`
+
 ## Development
 
 ### Docker

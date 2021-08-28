@@ -12,14 +12,11 @@ x-main: &main
     DB_PORT: 5432
     DB_USERNAME: postgres
     DB_PASSWORD: postgres
+    ONBOARDING_TOKEN: fake123
+    HAPPY_HOUSE_API_TOKEN: fake123
   depends_on:
     - postgres
     - redis
-
-networks:
-  default:
-    external:
-      name: happy_software_network
 
 services:
   postgres:
