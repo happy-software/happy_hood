@@ -1,63 +1,24 @@
 require "rails_helper"
 
 describe ZpidCollector do
-  let(:house) do
-    metadatum = HouseMetadatum.new
-    House.new(house_metadatum: metadatum,
-              address: {
-                city: "Salt Lake City",
-                state: "UT",
-                zip_code: "84044",
-                street_address: "123 Fake St"
-              })
-  end
   describe "#get_zpid" do
-    context "when zillow does not have data for the house" do
-      it "raises an appropriate error" do
-        mock_response = instance_double(Rubillow::Models::SearchResult,
-                                        success?: false,
-                                        message: "House was obliterated three years ago")
-
-        allow(Rubillow::HomeValuation).to receive(:search_results).and_return(mock_response)
-
-        instance = described_class.new(house)
-
-        expect { instance.get_zpid }.to raise_error(
-          ZpidCollectorError,
-          a_string_including(
-            "Could not update zpid for House",
-            "House was obliterated"
-          )
-        )
-      end
+    subject { described_class.new(search_details).get_zpid }
+    let(:search_details) do
+      {
+        city: "Salt Lake City",
+        state: "UT",
+        zip_code: "84044",
+        street_address: "123 Fake St"
+      }
     end
-
-    context "when zillow has the data for the house" do
-      context "and the data does not include a zpid" do
-        it "does not update the zpid" do
-          mock_response = instance_double(Rubillow::Models::SearchResult, success?: true, zpid: nil)
-
-          allow(Rubillow::HomeValuation).to receive(:search_results).and_return(mock_response)
-
-          instance = described_class.new(house)
-
-          expect { instance.get_zpid }.not_to change { house.zpid }
-        end
-      end
-
-      context "and the data has a zpid" do
-        it "updates the zpid" do
-          mock_response = instance_double(Rubillow::Models::SearchResult,
-                                          success?: true,
-                                          zpid: "my-zpid-from-zillow")
-
-          allow(Rubillow::HomeValuation).to receive(:search_results).and_return(mock_response)
-
-          instance = described_class.new(house)
-
-          expect { instance.get_zpid }.to change { house.zpid }.from(nil).to("my-zpid-from-zillow")
-        end
-      end
+    it 'should make a request to zillow' do
+      expect(Rubillow::HomeValuation).to receive(:search_results).with(
+        {
+          address: search_details[:street_address],
+          citystatezip: "#{search_details[:city]}, #{search_details[:state]} #{search_details[:zip_code]}"
+        }
+      )
+      subject
     end
   end
 
@@ -109,6 +70,13 @@ describe ZpidCollector do
 
           expect(house1.reload.zpid).to eq("my-zpid-from-zillow")
           expect(house2.reload.zpid).to be_nil
+        end
+      end
+
+      context "when zillow does not have data for the houses" do
+        before { allow(Rubillow::HomeValuation).to receive(:search_results).and_return(failure_mock) }
+        it "does not update any houses" do
+          expect(fill_missing_zpids).to have_attributes(updated_count: 0, total_houses: 2)
         end
       end
     end
