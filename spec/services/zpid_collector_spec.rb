@@ -1,18 +1,17 @@
 require "rails_helper"
 
 describe ZpidCollector do
+  let(:house) do
+    metadatum = HouseMetadatum.new
+    House.new(house_metadatum: metadatum,
+              address: {
+                city: "Salt Lake City",
+                state: "UT",
+                zip_code: "84044",
+                street_address: "123 Fake St"
+              })
+  end
   describe "#get_zpid" do
-    let(:house) do
-      metadatum = HouseMetadatum.new
-      House.new(house_metadatum: metadatum,
-                address: {
-                  city: "Salt Lake City",
-                  state: "UT",
-                  zip_code: "84044",
-                  street_address: "123 Fake St"
-                })
-    end
-
     context "when zillow does not have data for the house" do
       it "raises an appropriate error" do
         mock_response = instance_double(Rubillow::Models::SearchResult,
@@ -36,9 +35,7 @@ describe ZpidCollector do
     context "when zillow has the data for the house" do
       context "and the data does not include a zpid" do
         it "does not update the zpid" do
-          mock_response = instance_double(Rubillow::Models::SearchResult,
-                                          success?: true,
-                                          zpid: nil)
+          mock_response = instance_double(Rubillow::Models::SearchResult, success?: true, zpid: nil)
 
           allow(Rubillow::HomeValuation).to receive(:search_results).and_return(mock_response)
 
@@ -65,11 +62,10 @@ describe ZpidCollector do
   end
 
   describe ".fill_missing_zpids" do
+    subject(:fill_missing_zpids) { described_class.fill_missing_zpids }
     context "when there are no houses to update" do
       it "returns a result with a count" do
-        result = described_class.fill_missing_zpids
-
-        expect(result)
+        expect(fill_missing_zpids)
           .to be_a(
             ZpidCollectorResult
           ).and have_attributes(
@@ -80,62 +76,36 @@ describe ZpidCollector do
     end
 
     context "when only some houses to update" do
-      let(:hood) { Hood.create }
+      let(:hood)   { Hood.create }
+      let(:house1) { hood.houses.create(address: { street_address: "123" }, house_metadatum: HouseMetadatum.new) }
+      let(:house2) { hood.houses.create(address: { street_address: "abc" }, house_metadatum: HouseMetadatum.new) }
+      let(:success_mock) { double(Rubillow::Models::SearchResult, success?: true, zpid: "my-zpid-from-zillow") }
+      let(:failure_mock) { double(Rubillow::Models::SearchResult, success?: false, message: "house is a trashbin") }
+
+      before { house1; house2; }
 
       context "when they all update" do
+        before { allow(Rubillow::HomeValuation).to receive(:search_results).and_return(success_mock) }
+
         it "updates all the zpids" do
-          house1 = hood.houses.create(
-            address: { street_address: "123" },
-            house_metadatum: HouseMetadatum.new
-          )
-          house2 = hood.houses.create(
-            address: { street_address: "abc" },
-            house_metadatum: HouseMetadatum.new
-          )
-
-          mock_response = instance_double(Rubillow::Models::SearchResult,
-                                          success?: true,
-                                          zpid: "my-zpid-from-zillow")
-
-          allow(Rubillow::HomeValuation).to receive(:search_results).and_return(mock_response)
-
-          result = described_class.fill_missing_zpids
-
-          expect(result).to have_attributes(updated_count: 2, total_houses: 2)
-
+          expect(fill_missing_zpids).to have_attributes(updated_count: 2, total_houses: 2)
           expect(house1.reload.zpid).to eq("my-zpid-from-zillow")
           expect(house2.reload.zpid).to eq("my-zpid-from-zillow")
         end
       end
 
       context "when one of the houses to update fails" do
+        before do
+          allow(Rubillow::HomeValuation).to receive(:search_results)
+                                              .with(hash_including(address: house1.street_address))
+                                              .and_return(success_mock)
+          allow(Rubillow::HomeValuation).to receive(:search_results)
+                                              .with(hash_including(address: house2.street_address))
+                                              .and_return(failure_mock)
+        end
+
         it "updates the other house's zpid" do
-          house1 = hood.houses.create(
-            address: { street_address: "123" },
-            house_metadatum: HouseMetadatum.new
-          )
-          house2 = hood.houses.create(
-            address: { street_address: "abc" },
-            house_metadatum: HouseMetadatum.new
-          )
-
-          mock_success_response = instance_double(Rubillow::Models::SearchResult,
-                                                  success?: true,
-                                                  zpid: "my-zpid-from-zillow")
-          mock_failure_response = instance_double(Rubillow::Models::SearchResult,
-                                                  success?: false,
-                                                  message: "house is a trashbin")
-
-          allow(Rubillow::HomeValuation).to receive(:search_results)
-            .with(hash_including(address: house1.street_address))
-            .and_return(mock_success_response)
-          allow(Rubillow::HomeValuation).to receive(:search_results)
-            .with(hash_including(address: house2.street_address))
-            .and_return(mock_failure_response)
-
-          result = described_class.fill_missing_zpids
-
-          expect(result).to have_attributes(updated_count: 1, total_houses: 2)
+          expect(fill_missing_zpids).to have_attributes(updated_count: 1, total_houses: 2)
 
           expect(house1.reload.zpid).to eq("my-zpid-from-zillow")
           expect(house2.reload.zpid).to be_nil
