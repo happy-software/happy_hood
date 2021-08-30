@@ -4,5 +4,7 @@ Rails.application.routes.draw do
   get  '/house_valuations/:zpid', to: 'houses#valuations'
   post '/house_valuations/:zpid', to: 'houses#import'
 
+  post '/find_zpid', to: 'houses#find_zpid'
+
   post '/onboard', controller: 'onboarding', action: 'hood_and_houses'
 end

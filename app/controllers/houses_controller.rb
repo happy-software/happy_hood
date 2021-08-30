@@ -1,5 +1,5 @@
 class HousesController < ApplicationController
-  skip_before_action :verify_authenticity_token, :only => [:import]
+  skip_before_action :verify_authenticity_token, :only => [:import, :find_zpid]
   before_action { authenticate_request(ENV['HAPPY_HOUSE_API_TOKEN']) }
 
   def valuations
@@ -24,6 +24,19 @@ class HousesController < ApplicationController
     render json: {data: "Successfully imported valuation history!"}, status: 200
   end
 
+  def find_zpid
+    unless find_zpid_params.values.all? && find_zpid_params.keys.sort == [:street_address, :city, :state, :zip_code].sort
+      return render json: {error: 'Missing one or more required params (street_address, city, state, zip_code)'}, status: 400
+    end
+
+    api_result = ZpidCollector.new(find_zpid_params).get_zpid
+    unless api_result.success?
+      return render json: {error: "Could not find a zpid for: #{find_zpid_params.dig(:street_address)}"}, status: 404
+    end
+
+    render json: {data: {zpid: api_result.zpid}}, status: 200
+  end
+
   private
 
   def zpid
@@ -41,5 +54,11 @@ class HousesController < ApplicationController
 
   def house
     @house ||= house_details&.house
+  end
+
+  def find_zpid_params
+    params.permit([:street_address, :city, :state, :zip_code])
+          .slice(:street_address, :city, :state, :zip_code)
+          .to_h.symbolize_keys
   end
 end
