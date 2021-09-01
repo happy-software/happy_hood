@@ -14,7 +14,7 @@ describe "summaries.rake rake tasks" do
     let(:task_name) { "summaries:daily" }
 
     it "sends a daily price summary" do
-      expect(HappyHood::Slack::Client).to receive(:send_summary)
+      expect(HappyHood::Slack::Client).to receive(:send_summary_using_blocks)
 
       task.invoke
     end
@@ -27,7 +27,7 @@ describe "summaries.rake rake tasks" do
       end
 
       it "sends the daily price summary only once per day" do
-        expect(HappyHood::Slack::Client).to receive(:send_summary).exactly(1).time
+        expect(HappyHood::Slack::Client).to receive(:send_summary_using_blocks).exactly(1).time
 
         2.times do
           task.invoke

@@ -7,7 +7,12 @@ namespace :summaries do
     sent_message = false
 
     Rails.cache.fetch(cache_key, expires_in: 1.day) do
-      HappyHood::Slack::Client.send_summary(start_date: 1.day.ago, end_date: Date.today, error_text: "No changes for any HappyHood")
+      HappyHood::Slack::Client.send_summary_using_blocks(
+        summary_type: :daily,
+        start_date: 1.day.ago,
+        end_date: Date.today,
+        error_text: "No changes for any HappyHood",
+      )
 
       sent_message = true
     end
