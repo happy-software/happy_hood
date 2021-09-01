@@ -6,77 +6,75 @@ describe DifferenceBlockRenderer do
       let(:hood) { Hood.create(name: "Schitt's Creek") }
       let(:hood2) { Hood.create(name: "Del Boca Vista") }
 
-      context "when a neighborhood that was just added has houses partially valuated" do
-        it "posts a message without yesterday included" do
-          hood.houses.new
-            .add_valuation(Date.today, 24)
-            .save!
+      it "posts a message the valuation differences" do
+        hood.houses.new
+          .add_valuation(Date.today, 24)
+          .save!
 
-          hood2.houses.new
-            .add_valuation(12.days.ago, 50)
-            .add_valuation(Date.today, 50)
-            .save!
+        hood2.houses.new
+          .add_valuation(12.days.ago, 50)
+          .add_valuation(Date.today, 50)
+          .save!
 
-          hood2.houses.new
-            .add_valuation(12.days.ago, 20)
-            .add_valuation(Date.today, 24)
-            .save!
+        hood2.houses.new
+          .add_valuation(12.days.ago, 20)
+          .add_valuation(Date.today, 24)
+          .save!
 
-          differences = [
-            HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today),
-            HoodDifference.build_for(hood2, start_date: 1.day.ago, end_date: Date.today),
-          ]
+        differences = [
+          HoodDifference.build_for(hood, start_date: 1.day.ago, end_date: Date.today),
+          HoodDifference.build_for(hood2, start_date: 1.day.ago, end_date: Date.today),
+        ]
 
-          rendering = described_class.summarize_differences(differences, summary_type: :daily)
+        rendering = described_class.summarize_differences(differences, summary_type: :daily)
 
-          expect(rendering).to contain_exactly(
-            {
-              type: described_class::SECTION_TYPE,
-              text: {
-                type: described_class::MARKDOWN_TYPE,
-                text: ":wave: Hello team! Here is your *daily* summary for 2 Happy Hoods.",
-              },
+        expect(rendering).to contain_exactly(
+          {
+            type: described_class::SECTION_TYPE,
+            text: {
+              type: described_class::MARKDOWN_TYPE,
+              text: ":wave: Hello team! Here is your *daily* summary for 2 Happy Hoods.",
             },
-            described_class::DIVIDER_HASH,
-            {
-              type: described_class::SECTION_TYPE,
-              text: {
-                type: described_class::MARKDOWN_TYPE,
-                text: a_string_including(
-                  hood.name,
-                  "did not have a previous valuation.",
-                  "It is currently valuated at",
-                  "$24.00",
-                ),
-              },
+          },
+          described_class::DIVIDER_HASH,
+          {
+            type: described_class::SECTION_TYPE,
+            text: {
+              type: described_class::MARKDOWN_TYPE,
+              text: a_string_including(
+                hood.name,
+                "did not have a previous valuation.",
+                "It is currently valuated at",
+                "$24.00",
+              ),
             },
-            described_class::DIVIDER_HASH,
-            {
-              type: described_class::SECTION_TYPE,
-              text: {
-                type: described_class::MARKDOWN_TYPE,
-                text: a_string_including(
-                  hood2.name,
-                  "went up",
-                  "in price by",
-                  "$4.00",
-                  "increasing in valuation to",
-                  "$74.00",
-                  "The average Happy House price",
-                  "increased",
-                  "$2.00",
-                  "bringing the average cost to",
-                  "$37.00",
-                ),
-              },
+          },
+          described_class::DIVIDER_HASH,
+          {
+            type: described_class::SECTION_TYPE,
+            text: {
+              type: described_class::MARKDOWN_TYPE,
+              text: a_string_including(
+                hood2.name,
+                "went up",
+                "in price by",
+                "$4.00",
+                "increasing in valuation to",
+                "$74.00",
+                "The average Happy House price",
+                "increased",
+                "$2.00",
+                "bringing the average cost to",
+                "$37.00",
+              ),
             },
-            described_class::DIVIDER_HASH,
-          )
-        end
+          },
+          described_class::DIVIDER_HASH,
+        )
       end
 
       context "a neighborhood that has dropped in valuation" do
-        it "shows a negative sign to indicate a drop in price" do
+        it "uses language to indicate a drop in price" do
           hood.houses.new
             .add_valuation(1.day.ago, 25)
             .add_valuation(Date.today, 25)
