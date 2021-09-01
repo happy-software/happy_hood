@@ -32,7 +32,11 @@ namespace :summaries do
     sent_message = false
 
     Rails.cache.fetch(cache_key, expires_in: 1.month) do
-      HappyHood::Slack::Client.send_summary(start_date: Date.today.beginning_of_month, end_date: Date.today)
+      HappyHood::Slack::Client.send_summary_using_blocks(
+        summary_type: :monthly,
+        start_date: Date.today.beginning_of_month,
+        end_date: Date.today,
+      )
 
       sent_message = true
     end
@@ -57,7 +61,11 @@ namespace :summaries do
     sent_message = false
 
     Rails.cache.fetch(cache_key, expires_in: expires_in) do
-      HappyHood::Slack::Client.send_summary(start_date: beginning_of_quarter, end_date: end_of_quarter)
+      HappyHood::Slack::Client.send_summary_using_blocks(
+        summary_type: :quarterly,
+        start_date: beginning_of_quarter,
+        end_date: end_of_quarter,
+      )
 
       sent_message = true
     end

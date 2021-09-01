@@ -41,7 +41,7 @@ describe "summaries.rake rake tasks" do
     let(:task_name) { "summaries:monthly" }
 
     it "sends a monthly price summary" do
-      expect(HappyHood::Slack::Client).to receive(:send_summary)
+      expect(HappyHood::Slack::Client).to receive(:send_summary_using_blocks)
 
       task.invoke
     end
@@ -57,7 +57,7 @@ describe "summaries.rake rake tasks" do
 
         months.each do |month|
           Timecop.freeze(month) do
-            expect(HappyHood::Slack::Client).to receive(:send_summary).exactly(1).time
+            expect(HappyHood::Slack::Client).to receive(:send_summary_using_blocks).exactly(1).time
 
             2.times do
               task.invoke
@@ -73,7 +73,7 @@ describe "summaries.rake rake tasks" do
     let(:task_name) { "summaries:quarterly" }
 
     it "sends a quarterly price summary" do
-      expect(HappyHood::Slack::Client).to receive(:send_summary)
+      expect(HappyHood::Slack::Client).to receive(:send_summary_using_blocks)
 
       task.invoke
     end
@@ -88,7 +88,7 @@ describe "summaries.rake rake tasks" do
       it "sends the quarterly price summary only once per quarter" do
         months = [4.months.ago, 3.months.ago, 2.months.ago, 1.month.ago]
 
-        allow(HappyHood::Slack::Client).to receive(:send_summary)
+        allow(HappyHood::Slack::Client).to receive(:send_summary_using_blocks)
 
         months.each do |month|
           Timecop.freeze(month) do
@@ -99,7 +99,7 @@ describe "summaries.rake rake tasks" do
           end
         end
 
-        expect(HappyHood::Slack::Client).to have_received(:send_summary).exactly(2).times
+        expect(HappyHood::Slack::Client).to have_received(:send_summary_using_blocks).exactly(2).times
       end
     end
   end
