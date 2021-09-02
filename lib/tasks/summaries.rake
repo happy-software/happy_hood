@@ -28,14 +28,15 @@ namespace :summaries do
 
   desc "Send monthly summary to Slack"
   task monthly: :environment do
-    cache_key = "monthly_summary/#{Date.today.beginning_of_month}"
+    beginning_of_this_month = Date.today.beginning_of_month
+    cache_key = "monthly_summary/#{beginning_of_this_month}"
     sent_message = false
 
     Rails.cache.fetch(cache_key, expires_in: 1.month) do
       HappyHood::Slack::Client.send_summary_using_blocks(
         summary_type: :monthly,
-        start_date: Date.today.beginning_of_month,
-        end_date: Date.today,
+        start_date: beginning_of_this_month - 1.month,
+        end_date: beginning_of_this_month,
       )
 
       sent_message = true
